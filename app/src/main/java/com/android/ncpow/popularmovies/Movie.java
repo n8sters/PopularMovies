@@ -13,7 +13,7 @@ public class Movie {
     private String mMovieDescription;
 
     public Movie(String movieName, int imageResource, String releaseDate,
-                 String rating, String description ) {
+                 String rating, String description) {
         mMovieName = movieName;
         mPosterImage = imageResource;
         mReleaseDate = releaseDate;
@@ -21,8 +21,24 @@ public class Movie {
         mMovieDescription = description;
     }
 
+    public String getmMovieName() {
+        return mMovieName;
+    }
+
     public int getImageResourceId() {
         return mPosterImage;
+    }
+
+    public String getmReleaseDate() {
+        return mReleaseDate;
+    }
+
+    public String getmRating() {
+        return mRating;
+    }
+
+    public String getmMovieDescription() {
+        return mMovieDescription;
     }
 
 }

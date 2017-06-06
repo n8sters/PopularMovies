@@ -2,7 +2,6 @@ package com.android.ncpow.popularmovies;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Movie;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import java.util.ArrayList;
 
 /**
@@ -23,7 +23,7 @@ public class MovieAdapter extends ArrayAdapter<Movie> {
     private ArrayList data = new ArrayList();
 
     public MovieAdapter( Context context, int resource, ArrayList data) {
-        super(context, resource);
+        super(context, resource, data);
         this.layoutResourceId = resource;
         this.mContext = context;
         this.data = data;
@@ -46,12 +46,14 @@ public class MovieAdapter extends ArrayAdapter<Movie> {
             LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
             convertView = inflater.inflate(layoutResourceId, parent, false);
             holder = new ViewHolder();
-            holder.moviePoster = (ImageView) convertView.findViewById(R.id.poster_image_gridview);
+            holder.movieName = (TextView) convertView.findViewById(R.id.poster_text_view);
+            holder.moviePoster = (ImageView) convertView.findViewById(R.id.image);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
 
+        holder.movieName.setText(currentMovie.getmMovieName());
         holder.moviePoster.setImageResource(currentMovie.getImageResourceId());
         return  convertView;
 
