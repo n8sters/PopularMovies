@@ -1,11 +1,16 @@
 package com.android.ncpow.popularmovies;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.os.PersistableBundle;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import static com.android.ncpow.popularmovies.MainActivity.EXTRA_MOVIE_DESCRIPTION;
+import static com.android.ncpow.popularmovies.MainActivity.EXTRA_MOVIE_DURATION;
+import static com.android.ncpow.popularmovies.MainActivity.EXTRA_MOVIE_NAME;
+import static com.android.ncpow.popularmovies.MainActivity.EXTRA_MOVIE_RATING;
+import static com.android.ncpow.popularmovies.MainActivity.EXTRA_MOVIE_RELEASE_DATE;
 
 /**
  * Created by ncpow on 6/6/2017.
@@ -13,27 +18,33 @@ import android.widget.TextView;
 
 public class DetailActivity extends AppCompatActivity {
 
-    private String mMovieName;
-    private int mPosterImage;
-    private String mReleaseDate;
-    private String mRating;
-    private String mMovieDescription;
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
+    public void onCreate( Bundle savedInstanceState ) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.movie_detail);
 
         TextView movieName = (TextView) findViewById(R.id.movie_title_text_view);
         ImageView poster = (ImageView) findViewById(R.id.movie_poster_image_view);
         TextView releaseDate = (TextView) findViewById(R.id.release_date_text_view);
+        TextView rating = (TextView) findViewById(R.id.movie_rating_text_view);
         TextView durationtv = (TextView) findViewById(R.id.movie_duration_text_view);
         TextView description = (TextView) findViewById(R.id.description_text_view);
 
-        movieName.setText("Movie name");
-        poster.setImageResource(R.drawable.mad_max);
-        releaseDate.setText("2016");
-        durationtv.setText("120 min");
-        description.setText("Some guys do some things");
+        Intent intent = getIntent();
+        String id = intent.getStringExtra(EXTRA_MOVIE_NAME);
+        // get image?
+        String release = intent.getStringExtra(EXTRA_MOVIE_RELEASE_DATE);
+        String rate = intent.getStringExtra(EXTRA_MOVIE_RATING);
+        String duration = intent.getStringExtra(EXTRA_MOVIE_DURATION);
+        String desc = intent.getStringExtra(EXTRA_MOVIE_DESCRIPTION);
+
+        movieName.setText(id);
+        // add image here
+        releaseDate.setText(release);
+        rating.setText(rate);
+        durationtv.setText(duration);
+        description.setText(desc);
+
     }
 }
