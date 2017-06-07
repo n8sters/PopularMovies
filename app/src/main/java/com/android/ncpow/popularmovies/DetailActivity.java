@@ -9,6 +9,7 @@ import android.widget.TextView;
 import static com.android.ncpow.popularmovies.MainActivity.EXTRA_MOVIE_DESCRIPTION;
 import static com.android.ncpow.popularmovies.MainActivity.EXTRA_MOVIE_DURATION;
 import static com.android.ncpow.popularmovies.MainActivity.EXTRA_MOVIE_NAME;
+import static com.android.ncpow.popularmovies.MainActivity.EXTRA_MOVIE_POSTER;
 import static com.android.ncpow.popularmovies.MainActivity.EXTRA_MOVIE_RATING;
 import static com.android.ncpow.popularmovies.MainActivity.EXTRA_MOVIE_RELEASE_DATE;
 
@@ -33,14 +34,14 @@ public class DetailActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         String id = intent.getStringExtra(EXTRA_MOVIE_NAME);
-        // get image?
+        int image = intent.getIntExtra(EXTRA_MOVIE_POSTER, R.drawable.mad_max); // mad_max is placeholder
         String release = intent.getStringExtra(EXTRA_MOVIE_RELEASE_DATE);
         String rate = intent.getStringExtra(EXTRA_MOVIE_RATING);
         String duration = intent.getStringExtra(EXTRA_MOVIE_DURATION);
         String desc = intent.getStringExtra(EXTRA_MOVIE_DESCRIPTION);
 
         movieName.setText(id);
-        // add image here
+        poster.setImageResource(image);
         releaseDate.setText(release);
         rating.setText(rate);
         durationtv.setText(duration);

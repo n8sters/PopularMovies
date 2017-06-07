@@ -1,10 +1,13 @@
 package com.android.ncpow.popularmovies;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Created by ncpow on 6/5/2017.
  */
 
-public class Movie {
+public class Movie implements Parcelable {
 
     private String mMovieName;
     private int mPosterImage;
@@ -45,4 +48,13 @@ public class Movie {
         return mMovieDescription;
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+
+    }
 }
