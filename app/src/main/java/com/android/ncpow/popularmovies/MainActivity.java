@@ -32,19 +32,23 @@ public class MainActivity extends AppCompatActivity {
 
         GridView gridView = (GridView) findViewById(R.id.movie_grid_view);
         MovieAdapter adapter = new MovieAdapter(this, R.layout.grid_movie_layout, movies);
+        gridView.setOnItemClickListener(clickListener);
         gridView.setAdapter(adapter);
 
-        // set a click listener
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
 
-                Movie item = (Movie) adapterView.getItemAtPosition(position);
-                mMovieIntent = new Intent(MainActivity.this, DetailActivity.class);
-                String movieName = item.getmMovieName();
-                mMovieIntent.putExtra(EXTRA_MOVIE_NAME, movieName);
-                startActivity(mMovieIntent);
-            }
-        });
     }
+
+    private final GridView.OnItemClickListener clickListener = new GridView.OnItemClickListener() {
+
+        @Override
+        public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+            Movie item = (Movie) adapterView.getItemAtPosition(position);
+            mMovieIntent = new Intent(getApplicationContext(), DetailActivity.class);
+
+            String movieName = item.getmMovieName();
+            mMovieIntent.putExtra(EXTRA_MOVIE_NAME, movieName);
+            startActivity(mMovieIntent);
+
+        }
+    };
 }
