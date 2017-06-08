@@ -27,11 +27,16 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         final ArrayList<Movie> movies = new ArrayList<>();
-        movies.add(new Movie("Mad Max", R.drawable.mad_max, "2016","120 min", "8/10", "Stuff happens"));
-        movies.add(new Movie("Star Wars", R.drawable.star_wars, "2017"," 180 min", "6/10", "Space battles and jedi"));
-        movies.add(new Movie("Mad Max", R.drawable.mad_max, "2016","120 min", "8/10", "Stuff happens"));
-        movies.add(new Movie("Mad Max", R.drawable.mad_max, "2016","120 min", "8/10", "Stuff happens"));
-        movies.add(new Movie("Star Wars", R.drawable.star_wars, "2017"," 180 min", "6/10", "Space battles and jedi"));
+        movies.add(new Movie(getString(R.string.mad_max_movie_name), R.drawable.mad_max, getString(R.string.mad_max_release_date),
+                getString(R.string.mad_max_duration), getString(R.string.mad_max_rating), getString(R.string.mad_max_description)));
+        movies.add(new Movie(getString(R.string.mad_max_movie_name), R.drawable.mad_max, getString(R.string.mad_max_release_date),
+                getString(R.string.mad_max_duration), getString(R.string.mad_max_rating), getString(R.string.mad_max_description)));
+        movies.add(new Movie(getString(R.string.mad_max_movie_name), R.drawable.mad_max, getString(R.string.mad_max_release_date),
+                getString(R.string.mad_max_duration), getString(R.string.mad_max_rating), getString(R.string.mad_max_description)));
+        movies.add(new Movie(getString(R.string.mad_max_movie_name), R.drawable.mad_max, getString(R.string.mad_max_release_date),
+                getString(R.string.mad_max_duration), getString(R.string.mad_max_rating), getString(R.string.mad_max_description)));
+        movies.add(new Movie(getString(R.string.mad_max_movie_name), R.drawable.mad_max, getString(R.string.mad_max_release_date),
+                getString(R.string.mad_max_duration), getString(R.string.mad_max_rating), getString(R.string.mad_max_description)));
 
 
 

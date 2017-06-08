@@ -30,7 +30,7 @@ public class DetailActivity extends AppCompatActivity {
         TextView releaseDate = (TextView) findViewById(R.id.release_date_text_view);
         TextView rating = (TextView) findViewById(R.id.movie_rating_text_view);
         TextView durationtv = (TextView) findViewById(R.id.movie_duration_text_view);
-        TextView description = (TextView) findViewById(R.id.description_text_view);
+        TextView description = (TextView) findViewById(R.id.description_scroll_view);
 
         Intent intent = getIntent();
         String id = intent.getStringExtra(EXTRA_MOVIE_NAME);

@@ -19,6 +19,9 @@ public class Movie implements Parcelable {
     private String mRating;
     private String mMovieDescription;
 
+    // empty constructor
+    public Movie() {}
+
     public Movie(String movieName, int imageResource, String releaseDate, String duration,
                  String rating, String description) {
         mMovieName = movieName;
@@ -28,6 +31,8 @@ public class Movie implements Parcelable {
         mRating = rating;
         mMovieDescription = description;
     }
+
+    // getter methods vvv
 
     public String getmMovieName() {
         return mMovieName;
@@ -49,6 +54,16 @@ public class Movie implements Parcelable {
 
     public String getmMovieDescription() {
         return mMovieDescription;
+    }
+
+    // getter methods ^^^
+
+    //------------------------------- div ---------------------------------
+
+    // setter methods vvv
+
+    public void setmMovieName(String movieName ) {
+        mMovieName = movieName;
     }
 
 
