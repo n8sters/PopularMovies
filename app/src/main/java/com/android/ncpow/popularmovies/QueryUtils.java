@@ -1,6 +1,7 @@
 package com.android.ncpow.popularmovies;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -24,6 +25,7 @@ import java.util.List;
 
 public class QueryUtils {
 
+    private static final String LOG_TAG = QueryUtils.class.getSimpleName();
 
 
     // combine @extractFeaturesFromJson and @makeHTTPRequest to fetch data
@@ -36,7 +38,7 @@ public class QueryUtils {
         try {
             response = makeHTTPRequest(url);
         } catch (IOException e ) {
-            // LOG tag removed
+            Log.e(LOG_TAG, "Problem making the HTTP request.", e);
         }
         
         List<Movie> movies = extractFeaturesFromJson(response);
@@ -59,26 +61,25 @@ public class QueryUtils {
 
             JSONArray movieArray = baseJsonResponse.getJSONArray("results");
 
-            Movie[] movie = new Movie[movieArray.length()];
-
             // loop over JSONObjects and create Movie objects
             for ( int i = 0; i < movieArray.length(); i++ ) {
 
-                movie[i] = new Movie();
-
                 JSONObject currentMovie = movieArray.getJSONObject(i);
 
-                movie[i].setmMovieName(currentMovie.getString("original_title"));
+                String title = (currentMovie.getString("original_title"));
                 // FIXME: 6/8/2017
-                movie[i].setmPosterImage(R.drawable.mad_max);
-                movie[i].setmMovieDescription(currentMovie.getString("overview"));
-                movie[i].setmRating(currentMovie.getDouble("vote_average"));
-                movie[i].setmReleaseDate(currentMovie.getString("release_date"));
+                int poster = (R.drawable.mad_max);
+                String desc = (currentMovie.getString("overview"));
+                Double rating = (currentMovie.getDouble("vote_average"));
+                String releaseDate = (currentMovie.getString("release_date"));
 
+                Movie movie = new Movie(title, poster, releaseDate, "test", rating, desc);
+
+                movies.add(movie);
             }
 
         } catch ( JSONException e ) {
-            // LOG tag removed
+            Log.e("QueryUtils", "Problem parsing the earthquake JSON results", e);
 
             // IF YOU'RE READING THIS BEAUSE I APPLIED TO A POSITION
             // AT YOUR COMPANY SAY HI! EMAIL ME At
@@ -110,9 +111,11 @@ public class QueryUtils {
             if (connection.getResponseCode() == 200) {
                 stream = connection.getInputStream();
                 jsonResponse = readFromStream(stream);
+            } else {
+                Log.e(LOG_TAG, "Error response code: " + connection.getResponseCode());
             }
         } catch (IOException e) {
-            // log tag removed
+            Log.e(LOG_TAG, "Problem retrieving the earthquake JSON results.", e);
         } finally {
             if (connection != null) {
                 connection.disconnect();
@@ -129,7 +132,7 @@ public class QueryUtils {
         try {
             url = new URL(stringUrl);
         } catch (MalformedURLException e) {
-            // LOG tag removed
+            Log.e(LOG_TAG, "Problem building the URL ", e);
         }
         return url;
     }
