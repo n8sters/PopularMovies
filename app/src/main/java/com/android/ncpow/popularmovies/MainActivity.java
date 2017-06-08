@@ -28,16 +28,7 @@ public class MainActivity extends AppCompatActivity {
 
         final ArrayList<Movie> movies = new ArrayList<>();
         movies.add(new Movie(getString(R.string.mad_max_movie_name), R.drawable.mad_max, getString(R.string.mad_max_release_date),
-                getString(R.string.mad_max_duration), getString(R.string.mad_max_rating), getString(R.string.mad_max_description)));
-        movies.add(new Movie(getString(R.string.mad_max_movie_name), R.drawable.mad_max, getString(R.string.mad_max_release_date),
-                getString(R.string.mad_max_duration), getString(R.string.mad_max_rating), getString(R.string.mad_max_description)));
-        movies.add(new Movie(getString(R.string.mad_max_movie_name), R.drawable.mad_max, getString(R.string.mad_max_release_date),
-                getString(R.string.mad_max_duration), getString(R.string.mad_max_rating), getString(R.string.mad_max_description)));
-        movies.add(new Movie(getString(R.string.mad_max_movie_name), R.drawable.mad_max, getString(R.string.mad_max_release_date),
-                getString(R.string.mad_max_duration), getString(R.string.mad_max_rating), getString(R.string.mad_max_description)));
-        movies.add(new Movie(getString(R.string.mad_max_movie_name), R.drawable.mad_max, getString(R.string.mad_max_release_date),
-                getString(R.string.mad_max_duration), getString(R.string.mad_max_rating), getString(R.string.mad_max_description)));
-
+                getString(R.string.mad_max_duration), 8.6, getString(R.string.mad_max_description)));
 
 
         GridView gridView = (GridView) findViewById(R.id.movie_grid_view);
@@ -59,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
             int movieImage = item.getImageResourceId();
             String movieDuration = item.getmMovieDuration();
             String movieReleaseDate = item.getmReleaseDate();
-            String movieRating = item.getmRating();
+            Double movieRating = item.getmRating();
             String movieDescription = item.getmMovieDescription();
 
             mMovieIntent.putExtra(EXTRA_MOVIE_NAME, movieName);

@@ -16,14 +16,14 @@ public class Movie implements Parcelable {
     private int mPosterImage;
     private String mMovieDuration;
     private String mReleaseDate;
-    private String mRating;
+    private Double mRating;
     private String mMovieDescription;
 
     // empty constructor
     public Movie() {}
 
     public Movie(String movieName, int imageResource, String releaseDate, String duration,
-                 String rating, String description) {
+                 Double rating, String description) {
         mMovieName = movieName;
         mPosterImage = imageResource;
         mReleaseDate = releaseDate;
@@ -48,7 +48,7 @@ public class Movie implements Parcelable {
         return mReleaseDate;
     }
 
-    public String getmRating() {
+    public double getmRating() {
         return mRating;
     }
 
@@ -66,13 +66,37 @@ public class Movie implements Parcelable {
         mMovieName = movieName;
     }
 
+    // accepts int for default pic until I can implement Picasso
+    // TODO implement Picasso and fix image path & refactor to take String not int
+    public void setmPosterImage(int poster) {
+        mPosterImage = poster;
+    }
+
+    public void setmMovieDescription(String description) {
+        if (!description.equals(null)) {
+            mMovieDescription = description;
+        }
+    }
+
+    public void setmRating(Double rating) {
+        mRating = rating;
+    }
+
+    public void setmReleaseDate(String releaseDate) {
+        if (!releaseDate.equals(null)) {
+            mReleaseDate = releaseDate;
+        }
+    }
+
+
+
 
     protected Movie(Parcel in) {
         mMovieName = in.readString();
         mPosterImage = in.readInt();
         mMovieDuration = in.readString();
         mReleaseDate = in.readString();
-        mRating = in.readString();
+        mRating = Double.valueOf(in.readString());
         mMovieDescription = in.readString();
     }
 
@@ -87,7 +111,7 @@ public class Movie implements Parcelable {
         dest.writeInt(mPosterImage);
         dest.writeString(mMovieDuration);
         dest.writeString(mReleaseDate);
-        dest.writeString(mRating);
+        dest.writeValue(mRating);
         dest.writeString(mMovieDescription);
     }
 

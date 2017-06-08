@@ -1,6 +1,5 @@
 package com.android.ncpow.popularmovies;
 
-import android.test.mock.MockContentProvider;
 import android.text.TextUtils;
 
 import org.json.JSONArray;
@@ -11,11 +10,13 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
+
 
 /**
  * Created by ncpow on 6/8/2017.
@@ -68,6 +69,11 @@ public class QueryUtils {
                 JSONObject currentMovie = movieArray.getJSONObject(i);
 
                 movie[i].setmMovieName(currentMovie.getString("original_title"));
+                // FIXME: 6/8/2017
+                movie[i].setmPosterImage(R.drawable.mad_max);
+                movie[i].setmMovieDescription(currentMovie.getString("overview"));
+                movie[i].setmRating(currentMovie.getDouble("vote_average"));
+                movie[i].setmReleaseDate(currentMovie.getString("release_date"));
 
             }
 
@@ -84,7 +90,38 @@ public class QueryUtils {
     }
 
     private static String makeHTTPRequest(URL url) throws IOException {
-        
+        String jsonResponse = "";
+
+        // if null, return empty string
+        if (url == null) {
+            return jsonResponse;
+        }
+
+        HttpURLConnection connection = null;
+        InputStream stream = null;
+        try {
+            connection = (HttpURLConnection) url.openConnection();
+            connection.setReadTimeout(10000);
+            connection.setConnectTimeout(15000);
+            connection.setRequestMethod("GET");
+            connection.connect();
+
+            // 200 means success, go ahead and parse response
+            if (connection.getResponseCode() == 200) {
+                stream = connection.getInputStream();
+                jsonResponse = readFromStream(stream);
+            }
+        } catch (IOException e) {
+            // log tag removed
+        } finally {
+            if (connection != null) {
+                connection.disconnect();
+            }
+            if (stream != null) {
+                stream.close();
+            }
+        }
+        return jsonResponse;
     }
 
     private static URL createUrl(String stringUrl) {
