@@ -5,8 +5,11 @@ import android.os.Parcelable;
 
 /**
  * Created by ncpow on 6/5/2017.
+ *
+ * started with base class, and as suggested by my mentor has the class refactored at
+ * http://www.parcelabler.com/
+ * Thanks peeps!
  */
-
 public class Movie implements Parcelable {
 
     private String mMovieName;
@@ -48,13 +51,41 @@ public class Movie implements Parcelable {
         return mMovieDescription;
     }
 
+
+    protected Movie(Parcel in) {
+        mMovieName = in.readString();
+        mPosterImage = in.readInt();
+        mMovieDuration = in.readString();
+        mReleaseDate = in.readString();
+        mRating = in.readString();
+        mMovieDescription = in.readString();
+    }
+
     @Override
     public int describeContents() {
         return 0;
     }
 
     @Override
-    public void writeToParcel(Parcel parcel, int i) {
-
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(mMovieName);
+        dest.writeInt(mPosterImage);
+        dest.writeString(mMovieDuration);
+        dest.writeString(mReleaseDate);
+        dest.writeString(mRating);
+        dest.writeString(mMovieDescription);
     }
+
+    @SuppressWarnings("unused")
+    public static final Parcelable.Creator<Movie> CREATOR = new Parcelable.Creator<Movie>() {
+        @Override
+        public Movie createFromParcel(Parcel in) {
+            return new Movie(in);
+        }
+
+        @Override
+        public Movie[] newArray(int size) {
+            return new Movie[size];
+        }
+    };
 }
