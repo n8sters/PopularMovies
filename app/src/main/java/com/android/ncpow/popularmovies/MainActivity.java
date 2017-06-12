@@ -1,23 +1,20 @@
 package com.android.ncpow.popularmovies;
 
-import android.app.LoaderManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.Loader;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
-import java.util.ArrayList;
-import java.util.List;
+public class MainActivity extends AppCompatActivity {
 
-public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<Movie>> {
-
+    private final String LOG_TAG = MainActivity.class.getSimpleName();
 
     Intent mMovieIntent;
 
@@ -27,20 +24,14 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     // !!!!!! REMOVE THIS BEFORE PUSHES AND RELEASES!!!!!!!!!!!!!
     // !!!!!! REMOVE THIS BEFORE PUSHES AND RELEASES!!!!!!!!!!!!!
 
+    private Menu menu;
+
+    GridView gridView;
 
     MovieAdapter adapter;
 
     private static final String MOVIE_DB_REQUEST_URL =
-            "https://api.themoviedb.org/3/movie/157336?api_key=" + API_KEY;
-
-    private static final int MOVIE_LOADER_ID = 1;
-
-    public final static String EXTRA_MOVIE_NAME = "com.android.ncpow.popularmovies.EXTRA_MOVIE_NAME";
-    public final static String EXTRA_MOVIE_POSTER = "com.android.ncpow.popularmovies.EXTRA_MOVIE_POSTER";
-    public final static String EXTRA_MOVIE_RELEASE_DATE = "com.android.ncpow.popularmovies.EXTRA_MOVIE_RELEASE_DATE";
-    public final static String EXTRA_MOVIE_RATING = "com.android.ncpow.popularmovies.EXTRA_MOVIE_RATING";
-    public final static String EXTRA_MOVIE_DURATION = "com.android.ncpow.popularmovies.EXTRA_MOVIE_DURATION";
-    public final static String EXTRA_MOVIE_DESCRIPTION = "com.android.ncpow.popularmovies.EXTRA_MOVIE_DESCRIPTION";
+            "https://api.themoviedb.org/3/movie/550?api_key=" + API_KEY;
 
 
     @Override
@@ -48,28 +39,26 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        final ArrayList<Movie> movies = new ArrayList<>();
-        movies.add(new Movie(getString(R.string.mad_max_movie_name), R.drawable.mad_max, getString(R.string.mad_max_release_date),
-                getString(R.string.mad_max_duration), 8.6, getString(R.string.mad_max_description)));
-
-
-        GridView gridView = (GridView) findViewById(R.id.movie_grid_view);
-        adapter = new MovieAdapter(this, R.layout.grid_movie_layout, movies);
+        gridView = (GridView) findViewById(R.id.movie_grid_view);
         gridView.setOnItemClickListener(clickListener);
-        gridView.setAdapter(adapter);
 
-        // check state of connection
-        ConnectivityManager connectivityManager = (ConnectivityManager)
-                getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (savedInstanceState == null) {
+            queryCurrentMovieData("popularity.desc");
+        } else {
 
-        // get state of default network
-        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+            Parcelable[] parcelable = savedInstanceState.
+                    getParcelableArray(getString(R.string.movie_parcel_name));
 
-        if (networkInfo != null && networkInfo.isConnected()) {
+            if (parcelable != null) {
+                int numberReturnedMovie = parcelable.length;
+                Movie[] movies = new Movie[numberReturnedMovie];
+                for (int i = 0; i < numberReturnedMovie; i++) {
+                    movies[i] = (Movie) parcelable[i];
+                }
 
-            LoaderManager loaderManager = getLoaderManager();
+                gridView.setAdapter(adapter);
+            }
 
-            loaderManager.initLoader(MOVIE_LOADER_ID, null, this);
         }
 
     }
@@ -81,45 +70,63 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             Movie item = (Movie) adapterView.getItemAtPosition(position);
             mMovieIntent = new Intent(getApplicationContext(), DetailActivity.class);
 
-            String movieName = item.getmMovieName();
-            int movieImage = item.getImageResourceId();
-            String movieDuration = item.getmMovieDuration();
-            String movieReleaseDate = item.getmReleaseDate();
-            Double movieRating = item.getmRating();
-            String movieDescription = item.getmMovieDescription();
-
-            mMovieIntent.putExtra(EXTRA_MOVIE_NAME, movieName);
-            mMovieIntent.putExtra(EXTRA_MOVIE_POSTER, movieImage);
-            mMovieIntent.putExtra(EXTRA_MOVIE_DURATION, movieDuration);
-            mMovieIntent.putExtra(EXTRA_MOVIE_RELEASE_DATE, movieReleaseDate);
-            mMovieIntent.putExtra(EXTRA_MOVIE_RATING, movieRating);
-            mMovieIntent.putExtra(EXTRA_MOVIE_DESCRIPTION, movieDescription);
-
+            mMovieIntent.putExtra(getResources().getString(R.string.movie_parcel_name), item);
             startActivity(mMovieIntent);
 
         }
     };
 
 
-    @Override
-    public Loader<List<Movie>> onCreateLoader(int i, Bundle bundle) {
+    private void queryCurrentMovieData(String sortPreference) {
+        if (getInternetStatus() == true) {
 
-        Uri baseUri = Uri.parse(MOVIE_DB_REQUEST_URL);
-        Uri.Builder builder = baseUri.buildUpon();
+            // TODO refactor this to chance name and some mild functionality
+            MovieAsyncTask.OnTaskCompleted requestCompleted = new MovieAsyncTask.OnTaskCompleted() {
 
-        return new MovieLoader(this, builder.toString());
-    }
+                @Override
+                public void MovieAsyncTaskSuccessful(Movie[] movies) {
+                    gridView.setAdapter(new MovieAdapter(getApplicationContext(), movies));
+                }
+            };
 
-    @Override
-    public void onLoadFinished(Loader<List<Movie>> loader, List<Movie> movies) {
-        adapter.clear();
-        if (movies != null && !movies.isEmpty()) {
-            adapter.addAll(movies);
+            MovieAsyncTask movieAsyncTask = new MovieAsyncTask(requestCompleted, API_KEY);
+            movieAsyncTask.execute(sortPreference);
         }
     }
 
     @Override
-    public void onLoaderReset(Loader<List<Movie>> loader) {
-        adapter.clear();
+    protected void onSaveInstanceState(Bundle outState) {
+        //Log.v(LOG_TAG, "onSaveInstanceState");
+
+        int numMovieObjects = gridView.getCount();
+        if (numMovieObjects > 0) {
+            // Get Movie objects from gridview
+            Movie[] movies = new Movie[numMovieObjects];
+            for (int i = 0; i < numMovieObjects; i++) {
+                movies[i] = (Movie) gridView.getItemAtPosition(i);
+            }
+
+            // Save Movie objects to bundle
+            outState.putParcelableArray(getString(R.string.movie_parcel_name), movies);
+        }
+
+        super.onSaveInstanceState(outState);
+    }
+
+    // check if phone is connected to internet.
+    // TODO: add toast if no network is connected saying to connect to get movies!
+    private boolean getInternetStatus() {
+        // check state of connection
+        ConnectivityManager connectivityManager = (ConnectivityManager)
+                getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        // get state of default network
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+
+        if (networkInfo != null && networkInfo.isConnected()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

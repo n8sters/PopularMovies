@@ -13,7 +13,7 @@ import android.os.Parcelable;
 public class Movie implements Parcelable {
 
     private String mMovieName;
-    private int mPosterImage;
+    private String mPosterImage;
     private String mMovieDuration;
     private String mReleaseDate;
     private Double mRating;
@@ -22,7 +22,7 @@ public class Movie implements Parcelable {
     // empty constructor
     public Movie() {}
 
-    public Movie(String movieName, int imageResource, String releaseDate, String duration,
+    public Movie(String movieName, String imageResource, String releaseDate, String duration,
                  Double rating, String description) {
         mMovieName = movieName;
         mPosterImage = imageResource;
@@ -32,16 +32,19 @@ public class Movie implements Parcelable {
         mMovieDescription = description;
     }
 
+
     // getter methods vvv
 
     public String getmMovieName() {
         return mMovieName;
     }
 
-    public int getImageResourceId() {
-        return mPosterImage;
-    }
+    // TODO refactor
+    public String getPosterPath() {
+        final String TMDB_POSTER_BASE_URL = "https://image.tmdb.org/t/p/w185";
 
+        return TMDB_POSTER_BASE_URL + mPosterImage;
+    }
     public String getmMovieDuration() { return  mMovieDuration; }
 
     public String getmReleaseDate() {
@@ -66,9 +69,7 @@ public class Movie implements Parcelable {
         mMovieName = movieName;
     }
 
-    // accepts int for default pic until I can implement Picasso
-    // TODO implement Picasso and fix image path & refactor to take String not int
-    public void setmPosterImage(int poster) {
+    public void setmPosterImage(String poster) {
         mPosterImage = poster;
     }
 
@@ -93,7 +94,7 @@ public class Movie implements Parcelable {
 
     protected Movie(Parcel in) {
         mMovieName = in.readString();
-        mPosterImage = in.readInt();
+        mPosterImage = in.readString();
         mMovieDuration = in.readString();
         mReleaseDate = in.readString();
         mRating = Double.valueOf(in.readString());
@@ -108,7 +109,7 @@ public class Movie implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(mMovieName);
-        dest.writeInt(mPosterImage);
+        dest.writeString(mPosterImage);
         dest.writeString(mMovieDuration);
         dest.writeString(mReleaseDate);
         dest.writeValue(mRating);

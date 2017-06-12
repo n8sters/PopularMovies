@@ -9,4 +9,7 @@
     <string name="mad_max_duration">120 min</string>
     <string name="mad_max_rating">8.5 / 10</string>
     <string name="mad_max_description">In a not-too-distant dystopian future, when man\'s most precious resource -- oil -- has been depleted and the world plunged into war, famine and financial chaos, the last vestiges of the law in Australia attempt to restrain a vicious biker gang. Max (Mel Gibson), an officer with the Main Force Patrol, launches a personal vendetta against the gang when his wife (Joanne Samuel) and son are hunted down and murdered, leaving him with nothing but the instincts for survival and retribution.</string>
+    <string name="movie_parcel_name">MOVIE_PARCEL</string>
+    <string name="default_description">Trouble locating movie overview.</string>
+    <string name="default_date">----</string>
 </resources>

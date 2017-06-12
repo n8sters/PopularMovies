@@ -1,61 +1,71 @@
 package com.android.ncpow.popularmovies;
 
-import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.TextView;
 
-import java.util.ArrayList;
+import com.squareup.picasso.Picasso;
 
 /**
  * Created by ncpow on 6/5/2017.
  */
 
-public class MovieAdapter extends ArrayAdapter<Movie> {
+public class MovieAdapter extends BaseAdapter {
 
     private Context mContext;
-    private int layoutResourceId;
-    private ArrayList data = new ArrayList();
+    private Movie[] mMovies;
 
-    public MovieAdapter( Context context, int resource, ArrayList data) {
-        super(context, resource, data);
-        this.layoutResourceId = resource;
+    public MovieAdapter(Context context, Movie[] movies) {
         this.mContext = context;
-        this.data = data;
+        this.mMovies = movies;
     }
 
-    // grid layout poster adapter
-    static class ViewHolder {
-        TextView movieName; // not necessary for the end
-        ImageView moviePoster;
+    @Override
+    public int getCount() {
+        if (mMovies == null || mMovies.length == 0) {
+            return -1;
+        }
+
+        return mMovies.length;
+    }
+
+    @Override
+    public Object getItem(int i) {
+        if (mMovies == null || mMovies.length == 0) {
+            return null;
+        }
+
+        return mMovies[i];
+    }
+
+    @Override
+    public long getItemId(int i) {
+        return 0;
     }
 
     @NonNull
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-
-        ViewHolder holder = null;
-        Movie currentMovie = getItem(position);
+        ImageView posterView;
 
         if ( convertView == null ) {
-            LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
-            convertView = inflater.inflate(layoutResourceId, parent, false);
-            holder = new ViewHolder();
-            holder.movieName = (TextView) convertView.findViewById(R.id.poster_text_view);
-            holder.moviePoster = (ImageView) convertView.findViewById(R.id.image);
-            convertView.setTag(holder);
+            posterView = new ImageView(mContext);
+            posterView.setAdjustViewBounds(true);
         } else {
-            holder = (ViewHolder) convertView.getTag();
+            posterView = (ImageView) convertView;
         }
 
-        holder.movieName.setText(currentMovie.getmMovieName());
-        holder.moviePoster.setImageResource(currentMovie.getImageResourceId());
-        return  convertView;
+        Picasso.with(mContext)
+                .load(mMovies[position].getPosterPath())
+                .resize(mContext.getResources().getInteger(R.integer.poster_width),
+                        mContext.getResources().getInteger(R.integer.poster_height))
+                .error(R.drawable.no_poster_found) //TODO fix
+                .placeholder(R.drawable.black) //TODO fix
+                .into(posterView);
 
+        return posterView;
     }
 }
