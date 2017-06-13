@@ -1,3 +1,2 @@
 # PopularMovies
-Initial upload
-Take two guys
+An app for searching for the most popular or top rated movies! 
