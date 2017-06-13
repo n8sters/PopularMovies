@@ -48,8 +48,23 @@ public class Movie implements Parcelable {
         return mReleaseDate;
     }
 
-    public double getmRating() {
-        return mRating;
+
+    public String getRating() {
+        int num = (int) Math.ceil(mRating / 2);
+        switch (num) {
+            case 5:
+                return "* * * * *";
+            case 4:
+                return "* * * *";
+            case 3:
+                return "* * *";
+            case 2:
+                return "* *";
+            case 1:
+                return "*";
+            default:
+                return "No rating found";
+        }
     }
 
     public String getmMovieDescription() {
@@ -93,7 +108,7 @@ public class Movie implements Parcelable {
         mMovieName = in.readString();
         mPosterImage = in.readString();
         mReleaseDate = in.readString();
-        mRating = Double.valueOf(in.readString());
+        mRating = (Double) in.readValue(Double.class.getClassLoader());
         mMovieDescription = in.readString();
     }
 

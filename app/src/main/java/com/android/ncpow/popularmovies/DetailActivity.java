@@ -16,7 +16,6 @@ public class DetailActivity extends AppCompatActivity {
 
     private final String LOG_TAG = DetailActivity.class.getSimpleName();
 
-
     @Override
     public void onCreate( Bundle savedInstanceState ) {
         super.onCreate(savedInstanceState);
@@ -41,24 +40,23 @@ public class DetailActivity extends AppCompatActivity {
                 .placeholder(R.drawable.black)
                 .into(poster);
 
-        String overView = movie.getmMovieDescription();
-        if (overView == null) {
-            overView = getResources().getString(R.string.default_description);
-        }
-        description.setText(overView);
-        rating.setText("test rating");
-
-        // First get the release date from the object - to be used if something goes wrong with
-        // getting localized release date (catch).
-        // TODO refactor this
         String releaseDate = movie.getmReleaseDate();
-        if (releaseDate != null) {
-            // TODO fix date formatter
-            releaseDate = getResources().getString(R.string.default_date);
+        if (releaseDate.length() >= 4) {
+            releaseDate = movie.getmReleaseDate().substring(0, 4);
         } else {
             releaseDate = getResources().getString(R.string.default_date);
         }
         releaseDatetv.setText(releaseDate);
 
+
+        rating.setText(movie.getRating());
+
+        String overView = movie.getmMovieDescription();
+        if (overView == null) {
+            overView = getResources().getString(R.string.default_description);
+        } else {
+            description.setText(overView);
+
+        }
     }
 }

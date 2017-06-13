@@ -66,8 +66,8 @@ public class MovieAdapter extends BaseAdapter {
                 .load(mMovies[position].getPosterPath())
                 .resize(mContext.getResources().getInteger(R.integer.poster_width),
                         mContext.getResources().getInteger(R.integer.poster_height))
-                .error(R.drawable.no_poster_found) //TODO fix
-                .placeholder(R.drawable.black) //TODO fix
+                .error(R.drawable.no_poster_found)
+                .placeholder(R.drawable.black)
                 .into(posterView);
 
         Log.e(LOG_TAG, "Poster Path: " + mMovies[position].getPosterPath().toString());

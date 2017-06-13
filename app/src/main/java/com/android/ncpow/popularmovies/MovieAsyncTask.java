@@ -21,7 +21,6 @@ import java.net.URL;
  */
 
 // TODO: Refactor all of this tbh
-
 public class MovieAsyncTask extends AsyncTask<String, Void, Movie[]> {
 
     private final String LOG_TAG = MovieAsyncTask.class.getSimpleName();
@@ -29,6 +28,10 @@ public class MovieAsyncTask extends AsyncTask<String, Void, Movie[]> {
     private final String mApiKey;
 
     private final OnTaskCompleted mListener;
+
+    // base url to be appended upon
+    final String MOVIE_REQUEST_URL = "https://api.themoviedb.org/3/discover/movie?";
+
 
     public MovieAsyncTask(OnTaskCompleted listener, String apiKey) {
         super();
@@ -115,17 +118,10 @@ public class MovieAsyncTask extends AsyncTask<String, Void, Movie[]> {
      * @throws JSONException
      */
     private Movie[] getMoviesDataFromJson(String moviesJsonStr) throws JSONException {
-        // JSON tags
-        final String TAG_RESULTS = "results";
-        final String TAG_ORIGINAL_TITLE = "original_title";
-        final String TAG_POSTER_PATH = "poster_path"; // TODO fix image path
-        final String TAG_OVERVIEW = "overview";
-        final String TAG_VOTE_AVERAGE = "vote_average";
-        final String TAG_RELEASE_DATE = "release_date";
 
         // Get the array containing hte movies found
         JSONObject moviesJson = new JSONObject(moviesJsonStr);
-        JSONArray resultsArray = moviesJson.getJSONArray(TAG_RESULTS);
+        JSONArray resultsArray = moviesJson.getJSONArray("results");
 
         // Create array of Movie objects that stores data from the JSON string
         Movie[] movies = new Movie[resultsArray.length()];
@@ -139,11 +135,11 @@ public class MovieAsyncTask extends AsyncTask<String, Void, Movie[]> {
             JSONObject movieInfo = resultsArray.getJSONObject(i);
 
             // Store data in movie object
-            movies[i].setmMovieName(movieInfo.getString(TAG_ORIGINAL_TITLE));
-            movies[i].setmPosterImage(movieInfo.getString(TAG_POSTER_PATH)); // TODO fix image path
-            movies[i].setmMovieDescription(movieInfo.getString(TAG_OVERVIEW));
-            movies[i].setmRating(movieInfo.getDouble(TAG_VOTE_AVERAGE));
-            movies[i].setmReleaseDate(movieInfo.getString(TAG_RELEASE_DATE));
+            movies[i].setmMovieName(movieInfo.getString("original_title"));
+            movies[i].setmPosterImage(movieInfo.getString("poster_path"));
+            movies[i].setmMovieDescription(movieInfo.getString("overview"));
+            movies[i].setmRating(movieInfo.getDouble("vote_average"));
+            movies[i].setmReleaseDate(movieInfo.getString("release_date"));
         }
 
         return movies;
@@ -157,13 +153,13 @@ public class MovieAsyncTask extends AsyncTask<String, Void, Movie[]> {
      * @throws MalformedURLException
      */
     private URL getApiUrl(String[] parameters) throws MalformedURLException {
-        final String TMDB_BASE_URL = "https://api.themoviedb.org/3/discover/movie?";
-        final String SORT_BY_PARAM = "sort_by";
-        final String API_KEY_PARAM = "api_key";
 
-        Uri builtUri = Uri.parse(TMDB_BASE_URL).buildUpon()
-                .appendQueryParameter(SORT_BY_PARAM, parameters[0])
-                .appendQueryParameter(API_KEY_PARAM, mApiKey)
+        final String sortOrderString = "sort_by";
+        final String apiKeyPlaceholder = "api_key";
+
+        Uri builtUri = Uri.parse(MOVIE_REQUEST_URL).buildUpon()
+                .appendQueryParameter(sortOrderString, parameters[0])
+                .appendQueryParameter(apiKeyPlaceholder, mApiKey)
                 .build();
 
         return new URL(builtUri.toString());
@@ -172,8 +168,6 @@ public class MovieAsyncTask extends AsyncTask<String, Void, Movie[]> {
     @Override
     protected void onPostExecute(Movie[] movies) {
         super.onPostExecute(movies);
-
-        // Notify UI
         mListener.MovieAsyncTaskSuccessful(movies);
     }
 }

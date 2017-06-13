@@ -2,31 +2,18 @@ package com.android.ncpow.popularmovies;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
-public class MainActivity extends AppCompatActivity {
-
-
-    /**
-     * TODO:
-     * CURRENT TASK: FIX PICTURE LOADING ERROR AND ONLICK DETAIL VIEW CRASH
-     * <p>
-     * ASSIGNED 6/11/17
-     */
-
-
-
-
-
+public class MainActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
 
     private final String LOG_TAG = MainActivity.class.getSimpleName();
@@ -44,10 +31,6 @@ public class MainActivity extends AppCompatActivity {
     GridView gridView;
 
     MovieAdapter adapter;
-
-    private static final String MOVIE_DB_REQUEST_URL =
-            "https://api.themoviedb.org/3/movie/550?api_key=" + API_KEY;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,8 +52,6 @@ public class MainActivity extends AppCompatActivity {
                 Movie[] movies = new Movie[numberReturnedMovie];
                 for (int i = 0; i < numberReturnedMovie; i++) {
                     movies[i] = (Movie) parcelable[i];
-                    Log.e(LOG_TAG, "Poster path: " + movies[i].getPosterPath().toString());
-
                 }
 
                 gridView.setAdapter(adapter);
@@ -92,7 +73,6 @@ public class MainActivity extends AppCompatActivity {
 
         }
     };
-
 
     private void queryCurrentMovieData(String sortPreference) {
         if (getInternetStatus() == true) {
@@ -145,5 +125,10 @@ public class MainActivity extends AppCompatActivity {
         } else {
             return false;
         }
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
+
     }
 }
