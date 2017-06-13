@@ -2,6 +2,7 @@ package com.android.ncpow.popularmovies;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -14,6 +15,9 @@ import com.squareup.picasso.Picasso;
  */
 
 public class MovieAdapter extends BaseAdapter {
+
+    private final String LOG_TAG = MovieAdapter.class.getSimpleName();
+
 
     private Context mContext;
     private Movie[] mMovies;
@@ -66,6 +70,7 @@ public class MovieAdapter extends BaseAdapter {
                 .placeholder(R.drawable.black) //TODO fix
                 .into(posterView);
 
+        Log.e(LOG_TAG, "Poster Path: " + mMovies[position].getPosterPath().toString());
         return posterView;
     }
 }

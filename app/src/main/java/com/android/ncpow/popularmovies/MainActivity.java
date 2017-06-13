@@ -7,12 +7,27 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
 public class MainActivity extends AppCompatActivity {
+
+
+    /**
+     * TODO:
+     * CURRENT TASK: FIX PICTURE LOADING ERROR AND ONLICK DETAIL VIEW CRASH
+     * <p>
+     * ASSIGNED 6/11/17
+     */
+
+
+
+
+
+
 
     private final String LOG_TAG = MainActivity.class.getSimpleName();
 
@@ -54,6 +69,8 @@ public class MainActivity extends AppCompatActivity {
                 Movie[] movies = new Movie[numberReturnedMovie];
                 for (int i = 0; i < numberReturnedMovie; i++) {
                     movies[i] = (Movie) parcelable[i];
+                    Log.e(LOG_TAG, "Poster path: " + movies[i].getPosterPath().toString());
+
                 }
 
                 gridView.setAdapter(adapter);

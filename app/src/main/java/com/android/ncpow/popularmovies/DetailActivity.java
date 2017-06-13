@@ -1,7 +1,6 @@
 package com.android.ncpow.popularmovies;
 
 import android.content.Intent;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ImageView;
@@ -27,7 +26,6 @@ public class DetailActivity extends AppCompatActivity {
         ImageView poster = (ImageView) findViewById(R.id.movie_poster_image_view);
         TextView releaseDatetv = (TextView) findViewById(R.id.release_date_text_view);
         TextView rating = (TextView) findViewById(R.id.movie_rating_text_view);
-        TextView durationtv = (TextView) findViewById(R.id.movie_duration_text_view);
         TextView description = (TextView) findViewById(R.id.description_scroll_view);
 
         Intent intent = getIntent();
@@ -39,13 +37,12 @@ public class DetailActivity extends AppCompatActivity {
                 .load(movie.getPosterPath())
                 .resize(getResources().getInteger(R.integer.poster_width),
                         getResources().getInteger(R.integer.poster_height))
-                .error(R.drawable.mad_max)
-                .placeholder(R.drawable.mad_max)
+                .error(R.drawable.no_poster_found)
+                .placeholder(R.drawable.black)
                 .into(poster);
 
         String overView = movie.getmMovieDescription();
         if (overView == null) {
-            description.setTypeface(null, Typeface.ITALIC);
             overView = getResources().getString(R.string.default_description);
         }
         description.setText(overView);
@@ -59,7 +56,6 @@ public class DetailActivity extends AppCompatActivity {
             // TODO fix date formatter
             releaseDate = getResources().getString(R.string.default_date);
         } else {
-            releaseDatetv.setTypeface(null, Typeface.ITALIC);
             releaseDate = getResources().getString(R.string.default_date);
         }
         releaseDatetv.setText(releaseDate);

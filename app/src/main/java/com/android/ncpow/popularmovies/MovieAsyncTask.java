@@ -140,7 +140,7 @@ public class MovieAsyncTask extends AsyncTask<String, Void, Movie[]> {
 
             // Store data in movie object
             movies[i].setmMovieName(movieInfo.getString(TAG_ORIGINAL_TITLE));
-            movies[i].setmPosterImage(TAG_POSTER_PATH); // TODO fix image path
+            movies[i].setmPosterImage(movieInfo.getString(TAG_POSTER_PATH)); // TODO fix image path
             movies[i].setmMovieDescription(movieInfo.getString(TAG_OVERVIEW));
             movies[i].setmRating(movieInfo.getDouble(TAG_VOTE_AVERAGE));
             movies[i].setmReleaseDate(movieInfo.getString(TAG_RELEASE_DATE));

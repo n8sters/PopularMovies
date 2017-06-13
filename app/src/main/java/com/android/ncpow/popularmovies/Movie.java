@@ -14,7 +14,6 @@ public class Movie implements Parcelable {
 
     private String mMovieName;
     private String mPosterImage;
-    private String mMovieDuration;
     private String mReleaseDate;
     private Double mRating;
     private String mMovieDescription;
@@ -22,12 +21,11 @@ public class Movie implements Parcelable {
     // empty constructor
     public Movie() {}
 
-    public Movie(String movieName, String imageResource, String releaseDate, String duration,
+    public Movie(String movieName, String imageResource, String releaseDate,
                  Double rating, String description) {
         mMovieName = movieName;
         mPosterImage = imageResource;
         mReleaseDate = releaseDate;
-        mMovieDuration = duration;
         mRating = rating;
         mMovieDescription = description;
     }
@@ -45,7 +43,6 @@ public class Movie implements Parcelable {
 
         return TMDB_POSTER_BASE_URL + mPosterImage;
     }
-    public String getmMovieDuration() { return  mMovieDuration; }
 
     public String getmReleaseDate() {
         return mReleaseDate;
@@ -95,7 +92,6 @@ public class Movie implements Parcelable {
     protected Movie(Parcel in) {
         mMovieName = in.readString();
         mPosterImage = in.readString();
-        mMovieDuration = in.readString();
         mReleaseDate = in.readString();
         mRating = Double.valueOf(in.readString());
         mMovieDescription = in.readString();
@@ -110,7 +106,6 @@ public class Movie implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(mMovieName);
         dest.writeString(mPosterImage);
-        dest.writeString(mMovieDuration);
         dest.writeString(mReleaseDate);
         dest.writeValue(mRating);
         dest.writeString(mMovieDescription);
