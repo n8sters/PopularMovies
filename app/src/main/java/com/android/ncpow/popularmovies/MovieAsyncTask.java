@@ -54,7 +54,7 @@ public class MovieAsyncTask extends AsyncTask<String, Void, Movie[]> {
         String moviesJsonStr = null;
 
         try {
-            URL url = getApiUrl(strings);
+            URL url = createHTTPRequestUrl(strings);
 
             // Start connecting to get JSON
             urlConnection = (HttpURLConnection) url.openConnection();
@@ -145,14 +145,8 @@ public class MovieAsyncTask extends AsyncTask<String, Void, Movie[]> {
         return movies;
     }
 
-    /**
-     * Creates and returns an URL.
-     *
-     * @param parameters Parameters to be used in the API call
-     * @return URL formatted with parameters for the API
-     * @throws MalformedURLException
-     */
-    private URL getApiUrl(String[] parameters) throws MalformedURLException {
+
+    private URL createHTTPRequestUrl(String[] parameters) throws MalformedURLException {
 
         final String sortOrderString = "sort_by";
         final String apiKeyPlaceholder = "api_key";

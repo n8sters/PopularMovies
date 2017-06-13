@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="settings_sort_by_labels">
+        <item>@string/setting_order_by_popularity_label</item>
+        <item>@string/setting_order_by_rating_label</item>
+    </string-array>
+    <string-array name="settings_sort_by_values">
+        <item>@string/setting_order_by_popularity_value</item>
+        <item>@string/setting_order_by_rating_value</item>
+    </string-array>
+
+    <string name="setting_order_by_popularity_label">Popularity</string>
+    <string name="setting_order_by_popularity_value">popularity.desc</string>
+    <string name="setting_order_by_rating_label">Rating</string>
+    <string name="setting_order_by_rating_value">vote_average.desc</string>
+</resources>

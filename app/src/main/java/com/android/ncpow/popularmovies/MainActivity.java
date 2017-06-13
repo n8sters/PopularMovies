@@ -7,6 +7,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.View;
@@ -22,7 +23,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
     // !!!!!! REMOVE THIS BEFORE PUSHES AND RELEASES!!!!!!!!!!!!!
     // !!!!!! REMOVE THIS BEFORE PUSHES AND RELEASES!!!!!!!!!!!!!
-    private static final String API_KEY = "???";
+    private static final String API_KEY = "";
     // !!!!!! REMOVE THIS BEFORE PUSHES AND RELEASES!!!!!!!!!!!!!
     // !!!!!! REMOVE THIS BEFORE PUSHES AND RELEASES!!!!!!!!!!!!!
 
@@ -37,11 +38,15 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        prefs.registerOnSharedPreferenceChangeListener(this);
+
+
         gridView = (GridView) findViewById(R.id.movie_grid_view);
         gridView.setOnItemClickListener(clickListener);
 
         if (savedInstanceState == null) {
-            queryCurrentMovieData("popularity.desc");
+            queryCurrentMovieData("vote_average.desc");
         } else {
 
             Parcelable[] parcelable = savedInstanceState.
@@ -127,8 +132,13 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         }
     }
 
+
+    // TODO check values for strings
     @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
+    public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+        if (key.equals(getString(R.string.pref_sort_order))) {
+
+        }
 
     }
 }

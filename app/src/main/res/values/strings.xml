@@ -15,4 +15,9 @@
     <string name="settings_title">Settings</string>
     <string name="release_date_label">Release Year</string>
     <string name="rating_label">Rating</string>
+    <string name="pref_sort_order">sort_order</string>
+    <string name="settings_sort_order_key">sort_order_key</string>
+    <string name="settings_sort_by_label">Sort By</string>
+    <string name="settings_sort_by_key">sort_by</string>
+    <string name="settings_sort_by_default">popularity.desc</string>
 </resources>
