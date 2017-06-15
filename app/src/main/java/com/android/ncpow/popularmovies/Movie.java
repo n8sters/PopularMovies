@@ -13,6 +13,7 @@ import android.os.Parcelable;
 @SuppressWarnings("ObjectEqualsNull")
 public class Movie implements Parcelable {
 
+    // supressed for Lint
     @SuppressWarnings("unused")
     public static final Parcelable.Creator<Movie> CREATOR = new Parcelable.Creator<Movie>() {
         @Override
@@ -25,14 +26,13 @@ public class Movie implements Parcelable {
             return new Movie[size];
         }
     };
+    final String BASE_IMAGE_URL = "https://image.tmdb.org/t/p/w185";
     private String mMovieName;
     private String mPosterImage;
     private String mReleaseDate;
     private Double mRating;
     private String mMovieDescription;
 
-
-    // getter methods vvv
 
     // empty constructor
     public Movie() {}
@@ -53,29 +53,7 @@ public class Movie implements Parcelable {
         mMovieName = movieName;
     }
 
-    // TODO refactor
-    public String getPosterPath() {
-        final String TMDB_POSTER_BASE_URL = "https://image.tmdb.org/t/p/w185";
-
-        return TMDB_POSTER_BASE_URL + mPosterImage;
-    }
-
-    // getter methods ^^^
-
-    //------------------------------- div ---------------------------------
-
-    // setter methods vvv
-
-    public String getmReleaseDate() {
-        return mReleaseDate;
-    }
-
-    public void setmReleaseDate(String releaseDate) {
-        if (!releaseDate.equals(null)) {
-            mReleaseDate = releaseDate;
-        }
-    }
-
+    // converts numbers to star ratings.
     public String getRating() {
         int num = (int) Math.ceil(mRating / 2);
         switch (num) {
@@ -91,6 +69,26 @@ public class Movie implements Parcelable {
                 return "*";
             default:
                 return "No rating found";
+        }
+    }
+
+    public String getPosterPath() {
+        return BASE_IMAGE_URL + mPosterImage;
+    }
+
+    public String getmReleaseDate() {
+        return mReleaseDate;
+    }
+
+    // getter methods ^^^
+
+    //------------------------------- div ---------------------------------
+
+    // setter methods vvv
+
+    public void setmReleaseDate(String releaseDate) {
+        if (!releaseDate.equals(null)) {
+            mReleaseDate = releaseDate;
         }
     }
 

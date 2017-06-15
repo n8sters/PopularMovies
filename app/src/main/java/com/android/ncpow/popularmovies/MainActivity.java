@@ -23,6 +23,8 @@ public class MainActivity extends AppCompatActivity {
     private static final String API_KEY = "??";
     // !!!!!! REMOVE THIS BEFORE PUSHES AND RELEASES!!!!!!!!!!!!!
     // !!!!!! REMOVE THIS BEFORE PUSHES AND RELEASES!!!!!!!!!!!!!
+
+
     private final GridView.OnItemClickListener clickListener = new GridView.OnItemClickListener() {
 
         @Override
