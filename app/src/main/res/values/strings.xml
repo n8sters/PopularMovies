@@ -30,6 +30,7 @@
     <string name="error_code_500_message">API request failed</string>
     <string name="error_code_401_message">Your API key is invalid, or your account has been suspended.</string>
     <string name="error_code_400_message">Validation failed</string>
+    <string name="forgot_to_add_API_key_message">Did you forget to add your API key?</string>
 
 
 </resources>

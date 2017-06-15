@@ -15,32 +15,45 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.Toast;
-
 public class MainActivity extends AppCompatActivity {
 
 
-    Intent mMovieIntent;
-
     // !!!!!! REMOVE THIS BEFORE PUSHES AND RELEASES!!!!!!!!!!!!!
     // !!!!!! REMOVE THIS BEFORE PUSHES AND RELEASES!!!!!!!!!!!!!
-    private static final String API_KEY = "??";
-    // !!!!!! REMOVE THIS BEFORE PUSHES AND RELEASES!!!!!!!!!!!!!
-    // !!!!!! REMOVE THIS BEFORE PUSHES AND RELEASES!!!!!!!!!!!!!
-
-
-    GridView gridView;
+    private static final String API_KEY = "a90746122770e4eaa745543c90bf740b";
     public Menu mMenu;
+    // !!!!!! REMOVE THIS BEFORE PUSHES AND RELEASES!!!!!!!!!!!!!
+    // !!!!!! REMOVE THIS BEFORE PUSHES AND RELEASES!!!!!!!!!!!!!
+    Intent mMovieIntent;
+    private final GridView.OnItemClickListener clickListener = new GridView.OnItemClickListener() {
+
+        @Override
+        public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+            Movie item = (Movie) adapterView.getItemAtPosition(position);
+            mMovieIntent = new Intent(getApplicationContext(), DetailActivity.class);
+
+            mMovieIntent.putExtra(getResources().getString(R.string.movie_parcel_name), item);
+            startActivity(mMovieIntent);
+
+        }
+    };
+    GridView gridView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // in case you forget to add your API key
+        if (API_KEY.length() < 5) {
+            Toast.makeText(this, (R.string.forgot_to_add_API_key_message), Toast.LENGTH_LONG).show();
+
+        }
         gridView = (GridView) findViewById(R.id.movie_grid_view);
         gridView.setOnItemClickListener(clickListener);
 
         if (savedInstanceState == null) {
-            queryCurrentMovieData("vote_average.desc");
+            makeDBMovieRequest(getSortOrderFromSharedPrefs());
         } else {
 
             Parcelable[] parcelable = savedInstanceState.
@@ -60,25 +73,11 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
-    private final GridView.OnItemClickListener clickListener = new GridView.OnItemClickListener() {
-
-        @Override
-        public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-            Movie item = (Movie) adapterView.getItemAtPosition(position);
-            mMovieIntent = new Intent(getApplicationContext(), DetailActivity.class);
-
-            mMovieIntent.putExtra(getResources().getString(R.string.movie_parcel_name), item);
-            startActivity(mMovieIntent);
-
-        }
-    };
-
-    private void queryCurrentMovieData(String sortPreference) {
+    private void makeDBMovieRequest(String parameters) {
         if (getInternetStatus() == true) {
 
             // TODO refactor this to chance name and some mild functionality
-            MovieAsyncTask.OnTaskCompleted requestCompleted = new MovieAsyncTask.OnTaskCompleted() {
+            MovieAsyncTask.OnTaskCompleted onTaskCompleted = new MovieAsyncTask.OnTaskCompleted() {
 
                 @Override
                 public void MovieAsyncTaskSuccessful(Movie[] movies) {
@@ -86,8 +85,8 @@ public class MainActivity extends AppCompatActivity {
                 }
             };
 
-            MovieAsyncTask movieAsyncTask = new MovieAsyncTask(requestCompleted, API_KEY);
-            movieAsyncTask.execute(sortPreference);
+            MovieAsyncTask movieAsyncTask = new MovieAsyncTask(onTaskCompleted, API_KEY);
+            movieAsyncTask.execute(parameters);
         } else {
             // let user know that they are not connected to the internet
             Toast.makeText(this, getString(R.string.no_internet_message), Toast.LENGTH_LONG).show();
@@ -111,6 +110,8 @@ public class MainActivity extends AppCompatActivity {
         super.onSaveInstanceState(outState);
     }
 
+
+    // TODO DONE
     // check if phone is connected to internet.
     private boolean getInternetStatus() {
         // check state of connection
@@ -145,56 +146,60 @@ public class MainActivity extends AppCompatActivity {
                 .setTitle(R.string.menu_pop_label)
                 .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 
-        updateMenu();
+        changeToolbarSortTV();
 
         return true;
     }
 
-    // TODO refactor as if/else
+    // this method brings together the helper methods defined below
+    // to set the text in the toolbar and update the shared preferences.
+    // Originally a huge single method. It can be easily refactored back to
+    // that state if you're feeling particularly masochistic today...
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.string.setting_order_by_popularity_key:
-                updateSharedPrefs(getString(R.string.setting_order_by_popularity_value));
-                updateMenu();
-                queryCurrentMovieData(getSortMethod());
-                return true;
-            case R.string.setting_order_by_rating_key:
+        if ((item.getItemId() == R.string.setting_order_by_popularity_key)) {
+            updateSharedPrefs(getString(R.string.setting_order_by_popularity_value)); // order by popularity
+            changeToolbarSortTV(); // update the TV to show the "Sort by Rating" text
+            makeDBMovieRequest(getSortOrderFromSharedPrefs()); // re-query the API DB
+            return true;
+        } else if ((item.getItemId() == R.string.setting_order_by_rating_key)) { // basically the same as above, just in reverse.
                 updateSharedPrefs(getString(R.string.setting_order_by_rating_value));
-                updateMenu();
-                queryCurrentMovieData(getSortMethod());
+            changeToolbarSortTV();
+            makeDBMovieRequest(getSortOrderFromSharedPrefs());
                 return true;
-            default:
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    // TODO bring inside above method
-    private void updateMenu() {
-        String sortMethod = getSortMethod();
-
-        if (sortMethod.equals(getString(R.string.setting_order_by_rating_value))) {
-            mMenu.findItem(R.string.setting_order_by_rating_key).setVisible(false);
-            mMenu.findItem(R.string.setting_order_by_popularity_key).setVisible(true);
         } else {
-            mMenu.findItem(R.string.setting_order_by_popularity_key).setVisible(false);
-            mMenu.findItem(R.string.setting_order_by_rating_key).setVisible(true);
+            return super.onOptionsItemSelected(item);
         }
     }
 
-    // TODO bring inside above method
-    private String getSortMethod() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-
-        return prefs.getString(getString(R.string.pref_sort_order),
-                getString(R.string.setting_order_by_popularity_value));
+    // changes the text view in the toolbar to let the user know which
+    // sort order they are currently using.
+    private void changeToolbarSortTV() {
+        String sortMethod = getSortOrderFromSharedPrefs();
+        if (sortMethod.equals(getString(R.string.setting_order_by_rating_value))) {
+            mMenu.findItem(R.string.setting_order_by_rating_key).setVisible(false); // if we're sorting by popularity
+            mMenu.findItem(R.string.setting_order_by_popularity_key).setVisible(true); // give the alternate option to sort by rating.
+        } else {
+            mMenu.findItem(R.string.setting_order_by_popularity_key).setVisible(false); // and if we're sorting by rating
+            mMenu.findItem(R.string.setting_order_by_rating_key).setVisible(true); // give the option to sort by popularity
+        }
     }
 
+    // SUPER IMPORTANT METHOD DON'T CHANGE
+    // It queries the PreferenceManager to get the current sort order.
+    // Don't try to make this a class variable!!!
+    private String getSortOrderFromSharedPrefs() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        return sharedPreferences.getString(getString(R.string.pref_sort_order), getString(R.string.setting_order_by_popularity_value));
+    }
+
+    // taken from stack overflow
+    // https://stackoverflow.com/questions/10186215/sharedpreferences-value-is-not-updated
+    // credit where credit is due!
     private void updateSharedPrefs(String sortMethod) {
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-        SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putString(getString(R.string.pref_sort_order), sortMethod);
-        editor.apply();
+        SharedPreferences mypref = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor prefsEditr = mypref.edit();
+        prefsEditr.putString(getString(R.string.pref_sort_order), sortMethod);
+        prefsEditr.commit();
     }
 }
