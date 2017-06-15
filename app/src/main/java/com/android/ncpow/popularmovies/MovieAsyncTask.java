@@ -1,8 +1,9 @@
 package com.android.ncpow.popularmovies;
 
+import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.util.Log;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -15,19 +16,24 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.Charset;
 
 /**
- * Created by ncpow on 6/9/2017.
+ * Created by ncpow, Nathaniel ( Nate ) Powers.
+ * Please feel free to reach out if you want to talk or have any questions.
+ * My current email is ncpowers93@gmail.com.
+ * Cheers
  */
 
-// TODO: Refactor all of this tbh
+// This class is responsible for running a network query task off the main thread,
+// as to free up the UI thread as to avoid a buggy experience, or
+// potentially an ANR!!
 public class MovieAsyncTask extends AsyncTask<String, Void, Movie[]> {
 
-    private final String LOG_TAG = MovieAsyncTask.class.getSimpleName();
-
+    Context context;
     private final String mApiKey;
 
-    private final OnTaskCompleted mListener;
+    private final OnTaskCompleted listener;
 
     // base url to be appended upon
     final String MOVIE_REQUEST_URL = "https://api.themoviedb.org/3/discover/movie?";
@@ -35,58 +41,61 @@ public class MovieAsyncTask extends AsyncTask<String, Void, Movie[]> {
 
     public MovieAsyncTask(OnTaskCompleted listener, String apiKey) {
         super();
-
-        mListener = listener;
+        this.listener = listener;
         mApiKey = apiKey;
     }
 
+    // taken from StackOverflow
+    // https://stackoverflow.com/questions/9963691/android-asynctask-sending-callbacks-to-ui
     public interface OnTaskCompleted {
         void MovieAsyncTaskSuccessful(Movie[] movies);
-
     }
 
     @Override
     protected Movie[] doInBackground(String... strings) {
+
+        // base string to be mutated later
+        String jsonResponse = "";
+
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
-
-        // Holds data returned from the API
-        String moviesJsonStr = null;
-
+        InputStream inputStream;
         try {
             URL url = createHTTPRequestUrl(strings);
-
-            // Start connecting to get JSON
             urlConnection = (HttpURLConnection) url.openConnection();
+            // keep the app from reporting an ANR with a slow connection
+            urlConnection.setReadTimeout(10000 /* milliseconds */);
+            urlConnection.setConnectTimeout(15000 /* milliseconds */);
             urlConnection.setRequestMethod("GET");
             urlConnection.connect();
 
-            InputStream inputStream = urlConnection.getInputStream();
+            inputStream = urlConnection.getInputStream();
             StringBuilder builder = new StringBuilder();
 
-            if (inputStream == null) {
-                return null;
-            }
-            reader = new BufferedReader(new InputStreamReader(inputStream));
+            if (urlConnection.getResponseCode() == 200) {
+                inputStream = urlConnection.getInputStream();
+                jsonResponse = readFromStream(inputStream);
 
-            String line;
-            while ((line = reader.readLine()) != null) {
-                // Adds '\n' at last line if not already there.
-                // This supposedly makes it easier to debug.
-                builder.append(line).append("\n");
+            } else {
+                // lets user know what broke if there was an error
+                switch (urlConnection.getResponseCode()) {
+                    case 500:
+                        Toast.makeText(context, R.string.error_code_500_message,
+                                Toast.LENGTH_LONG).show();
+                        break;
+                    case 401:
+                        Toast.makeText(context, R.string.error_code_401_message,
+                                Toast.LENGTH_LONG).show();
+                        break;
+                    case 400:
+                        Toast.makeText(context, R.string.error_code_400_message,
+                                Toast.LENGTH_LONG).show();
+                        break;
+                }
             }
-
-            if (builder.length() == 0) {
-                // No data found. Nothing more to do here.
-                return null;
-            }
-
-            moviesJsonStr = builder.toString();
         } catch (IOException e) {
-            Log.e(LOG_TAG, "Error ", e);
             return null;
         } finally {
-            // Tidy up: release url connection and buffered reader
             if (urlConnection != null) {
                 urlConnection.disconnect();
             }
@@ -94,74 +103,93 @@ public class MovieAsyncTask extends AsyncTask<String, Void, Movie[]> {
                 try {
                     reader.close();
                 } catch (final IOException e) {
-                    Log.e(LOG_TAG, "Error closing stream", e);
                 }
             }
         }
-
         try {
-            // Make sense of the JSON data
-            return getMoviesDataFromJson(moviesJsonStr);
+            return extractDataFromJSONResponse(jsonResponse);
         } catch (JSONException e) {
-            Log.e(LOG_TAG, e.getMessage(), e);
             e.printStackTrace();
         }
-
         return null;
     }
 
-    /**
-     * Extracts data from the JSON object and returns an Array of movie objects.
-     *
-     * @param moviesJsonStr JSON string to be traversed
-     * @return Array of Movie objects
-     * @throws JSONException
-     */
-    private Movie[] getMoviesDataFromJson(String moviesJsonStr) throws JSONException {
+    // reads the input stream that the API is sending us.
+    // Copied directly from the Quake Report app, a Udacity project.
+    // The finished Quake Report app can be found in my GitHub under
+    // the name "Earthquake App" --Nate
+    private static String readFromStream(InputStream inputStream) throws IOException {
+        StringBuilder output = new StringBuilder();
+        if (inputStream != null) {
+            InputStreamReader inputStreamReader = new InputStreamReader(inputStream, Charset.forName("UTF-8"));
+            BufferedReader reader = new BufferedReader(inputStreamReader);
+            String line = reader.readLine();
+            while (line != null) {
+                output.append(line);
+                line = reader.readLine();
+            }
+        }
+        return output.toString();
+    }
 
-        // Get the array containing hte movies found
-        JSONObject moviesJson = new JSONObject(moviesJsonStr);
-        JSONArray resultsArray = moviesJson.getJSONArray("results");
 
-        // Create array of Movie objects that stores data from the JSON string
+    // pull the info we need to display from the API response.
+    private Movie[] extractDataFromJSONResponse(String moviesJsonStr) throws JSONException {
+
+        JSONObject apiResponse = new JSONObject(moviesJsonStr);
+        // gets the info under the "results" heading
+        JSONArray resultsArray = apiResponse.getJSONArray("results");
+
+        // usually returns exactly 20 movies, but we don't want to hardcode that
         Movie[] movies = new Movie[resultsArray.length()];
 
-        // Traverse through movies one by one and get data
         for (int i = 0; i < resultsArray.length(); i++) {
-            // Initialize each object before it can be used
+
             movies[i] = new Movie();
 
-            // Object contains all tags we're looking for
             JSONObject movieInfo = resultsArray.getJSONObject(i);
-
-            // Store data in movie object
+            //get movie name, not null
             movies[i].setmMovieName(movieInfo.getString("original_title"));
+            //get poster path, may be null
             movies[i].setmPosterImage(movieInfo.getString("poster_path"));
-            movies[i].setmMovieDescription(movieInfo.getString("overview"));
-            movies[i].setmRating(movieInfo.getDouble("vote_average"));
+            //get release date, we will only use the year, may be null
             movies[i].setmReleaseDate(movieInfo.getString("release_date"));
+            // get rating to push through star rating system selector, may be null
+            movies[i].setmRating(movieInfo.getDouble("vote_average"));
+            // get movie overview, may be null
+            movies[i].setmMovieDescription(movieInfo.getString("overview"));
         }
 
         return movies;
     }
 
 
+    // creates the API request URL with parameters from shared preferences
     private URL createHTTPRequestUrl(String[] parameters) throws MalformedURLException {
 
         final String sortOrderString = "sort_by";
+
+        // THIS IS NOT WHERE YOU PUT YOUR API KEY!!!!
+        // IT GOES AT THE VERY TOP OF MainActivity
         final String apiKeyPlaceholder = "api_key";
 
+        // works with the base URL from the top of this class.
         Uri builtUri = Uri.parse(MOVIE_REQUEST_URL).buildUpon()
                 .appendQueryParameter(sortOrderString, parameters[0])
                 .appendQueryParameter(apiKeyPlaceholder, mApiKey)
                 .build();
 
-        return new URL(builtUri.toString());
+        // build result api with parameters from shared preferences
+        URL resultUrl = new URL(builtUri.toString());
+
+        return resultUrl;
     }
 
+    // Lets the main thread know when we have some data ready to display
     @Override
     protected void onPostExecute(Movie[] movies) {
         super.onPostExecute(movies);
-        mListener.MovieAsyncTaskSuccessful(movies);
+        // let the main thread know we got some juicy data!
+        listener.MovieAsyncTaskSuccessful(movies);
     }
 }

@@ -19,8 +19,6 @@ import android.widget.Toast;
 public class MainActivity extends AppCompatActivity {
 
 
-    private final String LOG_TAG = MainActivity.class.getSimpleName();
-
     Intent mMovieIntent;
 
     // !!!!!! REMOVE THIS BEFORE PUSHES AND RELEASES!!!!!!!!!!!!!
@@ -90,6 +88,9 @@ public class MainActivity extends AppCompatActivity {
 
             MovieAsyncTask movieAsyncTask = new MovieAsyncTask(requestCompleted, API_KEY);
             movieAsyncTask.execute(sortPreference);
+        } else {
+            // let user know that they are not connected to the internet
+            Toast.makeText(this, getString(R.string.no_internet_message), Toast.LENGTH_LONG).show();
         }
     }
 
@@ -111,7 +112,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // check if phone is connected to internet.
-    // TODO: add toast if no network is connected saying to connect to get movies!
     private boolean getInternetStatus() {
         // check state of connection
         ConnectivityManager connectivityManager = (ConnectivityManager)
@@ -133,17 +133,16 @@ public class MainActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.main, menu);
         mMenu = menu;
 
+        mMenu.add(Menu.NONE, R.string.setting_order_by_rating_key, Menu.NONE, null)
+                .setVisible(false)
+                .setTitle(R.string.menu_rate_label)
+                .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
         mMenu.add(Menu.NONE,
                 R.string.setting_order_by_popularity_key,
                 Menu.NONE,
                 null)
                 .setVisible(false)
                 .setTitle(R.string.menu_pop_label)
-                .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-
-        mMenu.add(Menu.NONE, R.string.setting_order_by_rating_key, Menu.NONE, null)
-                .setVisible(false)
-                .setTitle(R.string.menu_rate_label)
                 .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 
         updateMenu();
@@ -175,12 +174,12 @@ public class MainActivity extends AppCompatActivity {
     private void updateMenu() {
         String sortMethod = getSortMethod();
 
-        if (sortMethod.equals(getString(R.string.setting_order_by_popularity_value))) {
-            mMenu.findItem(R.string.setting_order_by_popularity_key).setVisible(false);
-            mMenu.findItem(R.string.setting_order_by_rating_key).setVisible(true);
-        } else {
+        if (sortMethod.equals(getString(R.string.setting_order_by_rating_value))) {
             mMenu.findItem(R.string.setting_order_by_rating_key).setVisible(false);
             mMenu.findItem(R.string.setting_order_by_popularity_key).setVisible(true);
+        } else {
+            mMenu.findItem(R.string.setting_order_by_popularity_key).setVisible(false);
+            mMenu.findItem(R.string.setting_order_by_rating_key).setVisible(true);
         }
     }
 

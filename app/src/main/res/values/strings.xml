@@ -18,7 +18,7 @@
 
 
     <string name="pref_sort_order">sort_order</string>
-    <string name="settings_sort_by_default">popularity.desc</string>
+    <string name="settings_sort_by_default">vote_average.desc</string>
     <string name="setting_order_by_popularity_key">Popularity</string>
     <string name="setting_order_by_rating_key">Rating</string>
     <string name="setting_order_by_popularity_value">popularity.desc</string>
@@ -27,6 +27,9 @@
     <string name="menu_pop_label">Sort by popularity</string>
     <string name="menu_rate_label">sort by rating</string>
     <string name="no_internet_message">Internet connected needed to query movies</string>
+    <string name="error_code_500_message">API request failed</string>
+    <string name="error_code_401_message">Your API key is invalid, or your account has been suspended.</string>
+    <string name="error_code_400_message">Validation failed</string>
 
 
 </resources>
