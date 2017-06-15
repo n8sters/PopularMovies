@@ -2,35 +2,27 @@
     <string name="app_name">Popular Movies</string>
     <string name="detail_activity_title">Details</string>
     <string name="movie_name_string">Movie Name</string>
-    <string name="movie_test_rating">* * * *</string>
-    <string name="movie_test_description">In a not-too-distant dystopian future, when man\'s most precious resource -- oil -- has been depleted and the world plunged into war, famine and financial chaos, the last vestiges of the law in Australia attempt to restrain a vicious biker gang. Max (Mel Gibson), an officer with the Main Force Patrol, launches a personal vendetta against the gang when his wife (Joanne Samuel) and son are hunted down and murdered, leaving him with nothing but the instincts for survival and retribution.</string>
-    <string name="mad_max_movie_name">Mad Max</string>
-    <string name="mad_max_release_date">2016</string>
-    <string name="mad_max_duration">120 min</string>
-    <string name="mad_max_rating">* * * * *</string>
-    <string name="mad_max_description">In a not-too-distant dystopian future, when man\'s most precious resource -- oil -- has been depleted and the world plunged into war, famine and financial chaos, the last vestiges of the law in Australia attempt to restrain a vicious biker gang. Max (Mel Gibson), an officer with the Main Force Patrol, launches a personal vendetta against the gang when his wife (Joanne Samuel) and son are hunted down and murdered, leaving him with nothing but the instincts for survival and retribution.</string>
+    <string name="movie_test_rating" translatable="false">* * * *</string>
+    <string name="movie_test_description">In a not-too-distant dystopian future, when man\'s most precious resource — oil — has been depleted and the world plunged into war, famine and financial chaos, the last vestiges of the law in Australia attempt to restrain a vicious biker gang. Max (Mel Gibson), an officer with the Main Force Patrol, launches a personal vendetta against the gang when his wife (Joanne Samuel) and son are hunted down and murdered, leaving him with nothing but the instincts for survival and retribution.</string>
     <string name="movie_parcel_name">parcelable_extra</string>
     <string name="default_description">Trouble locating movie overview.</string>
     <string name="default_date">----</string>
     <string name="settings_title">Settings</string>
     <string name="release_date_label">Release Year</string>
     <string name="rating_label">Rating</string>
-
-
-    <string name="pref_sort_order">sort_order</string>
-    <string name="settings_sort_by_default">vote_average.desc</string>
-    <string name="setting_order_by_popularity_key">Popularity</string>
-    <string name="setting_order_by_rating_key">Rating</string>
-    <string name="setting_order_by_popularity_value">popularity.desc</string>
-    <string name="setting_order_by_rating_value">vote_average.desc</string>
-    <string name="sort_by_toolbar_text">Sort By</string>
+    <string name="pref_sort_order" translatable="false">sort_order</string>
+    <string name="setting_order_by_popularity_key" translatable="false">Popularity</string>
+    <string name="setting_order_by_rating_key" translatable="false">Rating</string>
+    <string name="setting_order_by_popularity_value" translatable="false">popularity.desc</string>
+    <string name="setting_order_by_rating_value" translatable="false">vote_average.desc</string>
     <string name="menu_pop_label">Sort by popularity</string>
     <string name="menu_rate_label">sort by rating</string>
     <string name="no_internet_message">Internet connected needed to query movies</string>
     <string name="error_code_500_message">API request failed</string>
-    <string name="error_code_401_message">Your API key is invalid, or your account has been suspended.</string>
+    <string name="error_code_401_message">Your API key is invalid, or your account has been suspended</string>
     <string name="error_code_400_message">Validation failed</string>
     <string name="forgot_to_add_API_key_message">Did you forget to add your API key?</string>
+    <string name="no_movies_message">No movies found</string>
 
 
 </resources>

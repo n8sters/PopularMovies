@@ -8,7 +8,10 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 
 /**
- * Created by ncpow on 6/12/2017.
+ * Created by ncpow, Nathaniel ( Nate ) Powers.
+ * Please feel free to reach out if you want to talk or have any questions.
+ * My current email is ncpowers93@gmail.com.
+ * Cheers
  */
 
 public class SettingsActivity extends PreferenceActivity
@@ -17,7 +20,7 @@ public class SettingsActivity extends PreferenceActivity
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Preference sort_order = findPreference(getString(R.string.setting_order_by_popularity_key));
+        @SuppressWarnings("deprecation") Preference sort_order = findPreference(getString(R.string.setting_order_by_popularity_key));
         bindPreferenceSummaryToValue(sort_order);
 
     }

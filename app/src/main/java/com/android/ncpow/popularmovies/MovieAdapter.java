@@ -10,16 +10,17 @@ import android.widget.ImageView;
 import com.squareup.picasso.Picasso;
 
 /**
- * Created by ncpow on 6/5/2017.
+ * Created by ncpow, Nathaniel ( Nate ) Powers.
+ * Please feel free to reach out if you want to talk or have any questions.
+ * My current email is ncpowers93@gmail.com.
+ * Cheers
  */
 
-public class MovieAdapter extends BaseAdapter {
-
-    private final String LOG_TAG = MovieAdapter.class.getSimpleName();
+class MovieAdapter extends BaseAdapter {
 
 
-    private Context mContext;
-    private Movie[] mMovies;
+    private final Context mContext;
+    private final Movie[] mMovies;
 
     public MovieAdapter(Context context, Movie[] movies) {
         this.mContext = context;

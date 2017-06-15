@@ -28,16 +28,13 @@ import java.nio.charset.Charset;
 // This class is responsible for running a network query task off the main thread,
 // as to free up the UI thread as to avoid a buggy experience, or
 // potentially an ANR!!
-public class MovieAsyncTask extends AsyncTask<String, Void, Movie[]> {
+class MovieAsyncTask extends AsyncTask<String, Void, Movie[]> {
 
-    Context context;
     private final String mApiKey;
 
     private final OnTaskCompleted listener;
 
-    // base url to be appended upon
-    final String MOVIE_REQUEST_URL = "https://api.themoviedb.org/3/discover/movie?";
-
+    private Context context;
 
     public MovieAsyncTask(OnTaskCompleted listener, String apiKey) {
         super();
@@ -45,10 +42,22 @@ public class MovieAsyncTask extends AsyncTask<String, Void, Movie[]> {
         mApiKey = apiKey;
     }
 
-    // taken from StackOverflow
-    // https://stackoverflow.com/questions/9963691/android-asynctask-sending-callbacks-to-ui
-    public interface OnTaskCompleted {
-        void MovieAsyncTaskSuccessful(Movie[] movies);
+    // reads the input stream that the API is sending us.
+    // Copied directly from the Quake Report app, a Udacity project.
+    // The finished Quake Report app can be found in my GitHub under
+    // the name "Earthquake App" --Nate
+    private static String readFromStream(InputStream inputStream) throws IOException {
+        StringBuilder output = new StringBuilder();
+        if (inputStream != null) {
+            InputStreamReader inputStreamReader = new InputStreamReader(inputStream, Charset.forName("UTF-8"));
+            BufferedReader reader = new BufferedReader(inputStreamReader);
+            String line = reader.readLine();
+            while (line != null) {
+                output.append(line);
+                line = reader.readLine();
+            }
+        }
+        return output.toString();
     }
 
     @Override
@@ -99,12 +108,6 @@ public class MovieAsyncTask extends AsyncTask<String, Void, Movie[]> {
             if (urlConnection != null) {
                 urlConnection.disconnect();
             }
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (final IOException e) {
-                }
-            }
         }
         try {
             return extractDataFromJSONResponse(jsonResponse);
@@ -113,25 +116,6 @@ public class MovieAsyncTask extends AsyncTask<String, Void, Movie[]> {
         }
         return null;
     }
-
-    // reads the input stream that the API is sending us.
-    // Copied directly from the Quake Report app, a Udacity project.
-    // The finished Quake Report app can be found in my GitHub under
-    // the name "Earthquake App" --Nate
-    private static String readFromStream(InputStream inputStream) throws IOException {
-        StringBuilder output = new StringBuilder();
-        if (inputStream != null) {
-            InputStreamReader inputStreamReader = new InputStreamReader(inputStream, Charset.forName("UTF-8"));
-            BufferedReader reader = new BufferedReader(inputStreamReader);
-            String line = reader.readLine();
-            while (line != null) {
-                output.append(line);
-                line = reader.readLine();
-            }
-        }
-        return output.toString();
-    }
-
 
     // pull the info we need to display from the API response.
     private Movie[] extractDataFromJSONResponse(String moviesJsonStr) throws JSONException {
@@ -163,7 +147,6 @@ public class MovieAsyncTask extends AsyncTask<String, Void, Movie[]> {
         return movies;
     }
 
-
     // creates the API request URL with parameters from shared preferences
     private URL createHTTPRequestUrl(String[] parameters) throws MalformedURLException {
 
@@ -174,6 +157,7 @@ public class MovieAsyncTask extends AsyncTask<String, Void, Movie[]> {
         final String apiKeyPlaceholder = "api_key";
 
         // works with the base URL from the top of this class.
+        String MOVIE_REQUEST_URL = "https://api.themoviedb.org/3/discover/movie?";
         Uri builtUri = Uri.parse(MOVIE_REQUEST_URL).buildUpon()
                 .appendQueryParameter(sortOrderString, parameters[0])
                 .appendQueryParameter(apiKeyPlaceholder, mApiKey)
@@ -191,5 +175,11 @@ public class MovieAsyncTask extends AsyncTask<String, Void, Movie[]> {
         super.onPostExecute(movies);
         // let the main thread know we got some juicy data!
         listener.MovieAsyncTaskSuccessful(movies);
+    }
+
+    // taken from StackOverflow
+    // https://stackoverflow.com/questions/9963691/android-asynctask-sending-callbacks-to-ui
+    public interface OnTaskCompleted {
+        void MovieAsyncTaskSuccessful(Movie[] movies);
     }
 }

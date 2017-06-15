@@ -9,12 +9,14 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 
 /**
- * Created by ncpow on 6/6/2017.
+ * Created by ncpow, Nathaniel ( Nate ) Powers.
+ * Please feel free to reach out if you want to talk or have any questions.
+ * My current email is ncpowers93@gmail.com.
+ * Cheers
  */
 
+// The detail activity, sets the images using Picasso.
 public class DetailActivity extends AppCompatActivity {
-
-    private final String LOG_TAG = DetailActivity.class.getSimpleName();
 
     @Override
     public void onCreate( Bundle savedInstanceState ) {
@@ -34,6 +36,7 @@ public class DetailActivity extends AppCompatActivity {
 
         Picasso.with(this)
                 .load(movie.getPosterPath())
+                // images use a 1:1.50 ratio.
                 .resize(getResources().getInteger(R.integer.poster_width),
                         getResources().getInteger(R.integer.poster_height))
                 .error(R.drawable.no_poster_found)
@@ -52,6 +55,8 @@ public class DetailActivity extends AppCompatActivity {
         rating.setText(movie.getRating());
 
         String overView = movie.getmMovieDescription();
+        // if there wasn't an overview assigned to the movie, let the user know
+        // instead of leaving the area blank
         if (overView == null) {
             overView = getResources().getString(R.string.default_description);
         } else {

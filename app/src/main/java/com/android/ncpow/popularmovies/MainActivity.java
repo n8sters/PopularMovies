@@ -21,51 +21,66 @@ public class MainActivity extends AppCompatActivity {
     // !!!!!! REMOVE THIS BEFORE PUSHES AND RELEASES!!!!!!!!!!!!!
     // !!!!!! REMOVE THIS BEFORE PUSHES AND RELEASES!!!!!!!!!!!!!
     private static final String API_KEY = "??";
-    public Menu mMenu;
     // !!!!!! REMOVE THIS BEFORE PUSHES AND RELEASES!!!!!!!!!!!!!
     // !!!!!! REMOVE THIS BEFORE PUSHES AND RELEASES!!!!!!!!!!!!!
-    Intent mMovieIntent;
     private final GridView.OnItemClickListener clickListener = new GridView.OnItemClickListener() {
 
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
             Movie item = (Movie) adapterView.getItemAtPosition(position);
-            mMovieIntent = new Intent(getApplicationContext(), DetailActivity.class);
+            Intent mMovieIntent = new Intent(getApplicationContext(), DetailActivity.class);
 
             mMovieIntent.putExtra(getResources().getString(R.string.movie_parcel_name), item);
             startActivity(mMovieIntent);
 
         }
     };
-    GridView gridView;
+    private Menu mMenu;
+    private GridView gridView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // in case you forget to add your API key
+        // in case you forget to add your API key make a toast to let user know
         if (API_KEY.length() < 5) {
             Toast.makeText(this, (R.string.forgot_to_add_API_key_message), Toast.LENGTH_LONG).show();
 
         }
+
+
+        // set up gridview of movie posters
         gridView = (GridView) findViewById(R.id.movie_grid_view);
         gridView.setOnItemClickListener(clickListener);
 
-        if (savedInstanceState == null) {
-            makeDBMovieRequest(getSortOrderFromSharedPrefs());
-        } else {
+        // get starting sort order.
+        String defaultSortOrder = getSortOrderFromSharedPrefs();
 
+        // if this is the first time the app is bring started
+        if (savedInstanceState == null) {
+            makeDBMovieRequest(defaultSortOrder);
+        } else {
+            // set up parcelable interface
             Parcelable[] parcelable = savedInstanceState.
                     getParcelableArray(getString(R.string.movie_parcel_name));
 
+            // if we have some movies
             if (parcelable != null) {
-                int numberReturnedMovie = parcelable.length;
-                Movie[] movies = new Movie[numberReturnedMovie];
-                for (int i = 0; i < numberReturnedMovie; i++) {
+
+                int length = parcelable.length;
+
+                Movie[] movies = new Movie[length];
+
+                for (int i = 0; i < length; i++) {
                     movies[i] = (Movie) parcelable[i];
                 }
 
+                // fill our gridview with movies
+                // !!!! IMPORTANT !!!!
+                // A new MovieAdapter must be created, if a class level
+                // adapter is used, the databse will only be queried one time,
+                // so if the device rotates the data will be lost
                 gridView.setAdapter(new MovieAdapter(this, movies));
             }
 
@@ -73,15 +88,18 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    //if we have an internet connection, make an API DB request
     private void makeDBMovieRequest(String parameters) {
-        if (getInternetStatus() == true) {
 
-            // TODO refactor this to chance name and some mild functionality
+        final Context context = getApplicationContext();
+        // if we has some internets!!!
+        if (getInternetStatus()) {
+
             MovieAsyncTask.OnTaskCompleted onTaskCompleted = new MovieAsyncTask.OnTaskCompleted() {
 
                 @Override
                 public void MovieAsyncTaskSuccessful(Movie[] movies) {
-                    gridView.setAdapter(new MovieAdapter(getApplicationContext(), movies));
+                    gridView.setAdapter(new MovieAdapter(context, movies));
                 }
             };
 
@@ -93,25 +111,26 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
 
-        int numMovieObjects = gridView.getCount();
-        if (numMovieObjects > 0) {
-            Movie[] movies = new Movie[numMovieObjects];
-            for (int i = 0; i < numMovieObjects; i++) {
+    // repopulates when the device is rotated or navigated back to from
+    // the DetailActivity
+    @Override
+    protected void onSaveInstanceState(Bundle bundle) {
+        int count = gridView.getCount();
+        if (count > 0) {
+            Movie[] movies = new Movie[count];
+            // for each movie in teh gridview
+            for (int i = 0; i < count; i++) {
                 movies[i] = (Movie) gridView.getItemAtPosition(i);
             }
-
-            // Save Movie objects to bundle
-            outState.putParcelableArray(getString(R.string.movie_parcel_name), movies);
+            // put that movies data into that box
+            bundle.putParcelableArray(getString(R.string.movie_parcel_name), movies);
+        } else {
+            Toast.makeText(this, getString(R.string.no_movies_message), Toast.LENGTH_LONG).show();
         }
-
-        super.onSaveInstanceState(outState);
+        super.onSaveInstanceState(bundle);
     }
 
-
-    // TODO DONE
     // check if phone is connected to internet.
     private boolean getInternetStatus() {
         // check state of connection
@@ -198,8 +217,8 @@ public class MainActivity extends AppCompatActivity {
     // credit where credit is due!
     private void updateSharedPrefs(String sortMethod) {
         SharedPreferences mypref = PreferenceManager.getDefaultSharedPreferences(this);
-        SharedPreferences.Editor prefsEditr = mypref.edit();
-        prefsEditr.putString(getString(R.string.pref_sort_order), sortMethod);
-        prefsEditr.commit();
+        SharedPreferences.Editor prefsEditor = mypref.edit();
+        prefsEditor.putString(getString(R.string.pref_sort_order), sortMethod);
+        prefsEditor.apply();
     }
 }

@@ -10,31 +10,47 @@ import android.os.Parcelable;
  * http://www.parcelabler.com/
  * Thanks peeps!
  */
+@SuppressWarnings("ObjectEqualsNull")
 public class Movie implements Parcelable {
 
+    @SuppressWarnings("unused")
+    public static final Parcelable.Creator<Movie> CREATOR = new Parcelable.Creator<Movie>() {
+        @Override
+        public Movie createFromParcel(Parcel in) {
+            return new Movie(in);
+        }
+
+        @Override
+        public Movie[] newArray(int size) {
+            return new Movie[size];
+        }
+    };
     private String mMovieName;
     private String mPosterImage;
     private String mReleaseDate;
     private Double mRating;
     private String mMovieDescription;
 
-    // empty constructor
-    public Movie() {}
-
-    public Movie(String movieName, String imageResource, String releaseDate,
-                 Double rating, String description) {
-        mMovieName = movieName;
-        mPosterImage = imageResource;
-        mReleaseDate = releaseDate;
-        mRating = rating;
-        mMovieDescription = description;
-    }
-
 
     // getter methods vvv
 
+    // empty constructor
+    public Movie() {}
+
+    private Movie(Parcel in) {
+        mMovieName = in.readString();
+        mPosterImage = in.readString();
+        mReleaseDate = in.readString();
+        mRating = (Double) in.readValue(Double.class.getClassLoader());
+        mMovieDescription = in.readString();
+    }
+
     public String getmMovieName() {
         return mMovieName;
+    }
+
+    public void setmMovieName(String movieName) {
+        mMovieName = movieName;
     }
 
     // TODO refactor
@@ -44,10 +60,21 @@ public class Movie implements Parcelable {
         return TMDB_POSTER_BASE_URL + mPosterImage;
     }
 
+    // getter methods ^^^
+
+    //------------------------------- div ---------------------------------
+
+    // setter methods vvv
+
     public String getmReleaseDate() {
         return mReleaseDate;
     }
 
+    public void setmReleaseDate(String releaseDate) {
+        if (!releaseDate.equals(null)) {
+            mReleaseDate = releaseDate;
+        }
+    }
 
     public String getRating() {
         int num = (int) Math.ceil(mRating / 2);
@@ -71,45 +98,18 @@ public class Movie implements Parcelable {
         return mMovieDescription;
     }
 
-    // getter methods ^^^
-
-    //------------------------------- div ---------------------------------
-
-    // setter methods vvv
-
-    public void setmMovieName(String movieName ) {
-        mMovieName = movieName;
-    }
-
-    public void setmPosterImage(String poster) {
-        mPosterImage = poster;
-    }
-
     public void setmMovieDescription(String description) {
         if (!description.equals(null)) {
             mMovieDescription = description;
         }
     }
 
+    public void setmPosterImage(String poster) {
+        mPosterImage = poster;
+    }
+
     public void setmRating(Double rating) {
         mRating = rating;
-    }
-
-    public void setmReleaseDate(String releaseDate) {
-        if (!releaseDate.equals(null)) {
-            mReleaseDate = releaseDate;
-        }
-    }
-
-
-
-
-    protected Movie(Parcel in) {
-        mMovieName = in.readString();
-        mPosterImage = in.readString();
-        mReleaseDate = in.readString();
-        mRating = (Double) in.readValue(Double.class.getClassLoader());
-        mMovieDescription = in.readString();
     }
 
     @Override
@@ -125,17 +125,4 @@ public class Movie implements Parcelable {
         dest.writeValue(mRating);
         dest.writeString(mMovieDescription);
     }
-
-    @SuppressWarnings("unused")
-    public static final Parcelable.Creator<Movie> CREATOR = new Parcelable.Creator<Movie>() {
-        @Override
-        public Movie createFromParcel(Parcel in) {
-            return new Movie(in);
-        }
-
-        @Override
-        public Movie[] newArray(int size) {
-            return new Movie[size];
-        }
-    };
 }
