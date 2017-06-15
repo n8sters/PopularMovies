@@ -20,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
 
     // !!!!!! REMOVE THIS BEFORE PUSHES AND RELEASES!!!!!!!!!!!!!
     // !!!!!! REMOVE THIS BEFORE PUSHES AND RELEASES!!!!!!!!!!!!!
-    private static final String API_KEY = "a90746122770e4eaa745543c90bf740b";
+    private static final String API_KEY = "??";
     public Menu mMenu;
     // !!!!!! REMOVE THIS BEFORE PUSHES AND RELEASES!!!!!!!!!!!!!
     // !!!!!! REMOVE THIS BEFORE PUSHES AND RELEASES!!!!!!!!!!!!!
