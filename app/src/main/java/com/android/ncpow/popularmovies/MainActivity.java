@@ -10,11 +10,13 @@ import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
+public class MainActivity extends AppCompatActivity {
 
 
     private final String LOG_TAG = MainActivity.class.getSimpleName();
@@ -23,24 +25,18 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
     // !!!!!! REMOVE THIS BEFORE PUSHES AND RELEASES!!!!!!!!!!!!!
     // !!!!!! REMOVE THIS BEFORE PUSHES AND RELEASES!!!!!!!!!!!!!
-    private static final String API_KEY = "";
+    private static final String API_KEY = "??";
     // !!!!!! REMOVE THIS BEFORE PUSHES AND RELEASES!!!!!!!!!!!!!
     // !!!!!! REMOVE THIS BEFORE PUSHES AND RELEASES!!!!!!!!!!!!!
 
-    private Menu menu;
 
     GridView gridView;
-
-    MovieAdapter adapter;
+    public Menu mMenu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        prefs.registerOnSharedPreferenceChangeListener(this);
-
 
         gridView = (GridView) findViewById(R.id.movie_grid_view);
         gridView.setOnItemClickListener(clickListener);
@@ -59,12 +55,13 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                     movies[i] = (Movie) parcelable[i];
                 }
 
-                gridView.setAdapter(adapter);
+                gridView.setAdapter(new MovieAdapter(this, movies));
             }
 
         }
 
     }
+
 
     private final GridView.OnItemClickListener clickListener = new GridView.OnItemClickListener() {
 
@@ -98,11 +95,9 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        //Log.v(LOG_TAG, "onSaveInstanceState");
 
         int numMovieObjects = gridView.getCount();
         if (numMovieObjects > 0) {
-            // Get Movie objects from gridview
             Movie[] movies = new Movie[numMovieObjects];
             for (int i = 0; i < numMovieObjects; i++) {
                 movies[i] = (Movie) gridView.getItemAtPosition(i);
@@ -128,17 +123,79 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         if (networkInfo != null && networkInfo.isConnected()) {
             return true;
         } else {
+            Toast.makeText(this, getString(R.string.no_internet_message), Toast.LENGTH_LONG).show();
             return false;
         }
     }
 
-
-    // TODO check values for strings
     @Override
-    public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-        if (key.equals(getString(R.string.pref_sort_order))) {
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        mMenu = menu;
 
+        mMenu.add(Menu.NONE,
+                R.string.setting_order_by_popularity_key,
+                Menu.NONE,
+                null)
+                .setVisible(false)
+                .setTitle(R.string.menu_pop_label)
+                .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+
+        mMenu.add(Menu.NONE, R.string.setting_order_by_rating_key, Menu.NONE, null)
+                .setVisible(false)
+                .setTitle(R.string.menu_rate_label)
+                .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+
+        updateMenu();
+
+        return true;
+    }
+
+    // TODO refactor as if/else
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.string.setting_order_by_popularity_key:
+                updateSharedPrefs(getString(R.string.setting_order_by_popularity_value));
+                updateMenu();
+                queryCurrentMovieData(getSortMethod());
+                return true;
+            case R.string.setting_order_by_rating_key:
+                updateSharedPrefs(getString(R.string.setting_order_by_rating_value));
+                updateMenu();
+                queryCurrentMovieData(getSortMethod());
+                return true;
+            default:
         }
 
+        return super.onOptionsItemSelected(item);
+    }
+
+    // TODO bring inside above method
+    private void updateMenu() {
+        String sortMethod = getSortMethod();
+
+        if (sortMethod.equals(getString(R.string.setting_order_by_popularity_value))) {
+            mMenu.findItem(R.string.setting_order_by_popularity_key).setVisible(false);
+            mMenu.findItem(R.string.setting_order_by_rating_key).setVisible(true);
+        } else {
+            mMenu.findItem(R.string.setting_order_by_rating_key).setVisible(false);
+            mMenu.findItem(R.string.setting_order_by_popularity_key).setVisible(true);
+        }
+    }
+
+    // TODO bring inside above method
+    private String getSortMethod() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+        return prefs.getString(getString(R.string.pref_sort_order),
+                getString(R.string.setting_order_by_popularity_value));
+    }
+
+    private void updateSharedPrefs(String sortMethod) {
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(getString(R.string.pref_sort_order), sortMethod);
+        editor.apply();
     }
 }

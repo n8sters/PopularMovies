@@ -2,7 +2,6 @@ package com.android.ncpow.popularmovies;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -69,8 +68,6 @@ public class MovieAdapter extends BaseAdapter {
                 .error(R.drawable.no_poster_found)
                 .placeholder(R.drawable.black)
                 .into(posterView);
-
-        Log.e(LOG_TAG, "Poster Path: " + mMovies[position].getPosterPath().toString());
         return posterView;
     }
 }
