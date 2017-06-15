@@ -155,17 +155,11 @@ public class MainActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.main, menu);
         mMenu = menu;
 
-        mMenu.add(Menu.NONE, R.string.setting_order_by_rating_key, Menu.NONE, null)
-                .setVisible(false)
-                .setTitle(R.string.menu_rate_label)
-                .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+        mMenu.add(Menu.NONE, R.string.setting_order_by_rating_key, Menu.NONE, null).setVisible(false)
+                .setTitle(R.string.menu_rate_label).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
         mMenu.add(Menu.NONE,
-                R.string.setting_order_by_popularity_key,
-                Menu.NONE,
-                null)
-                .setVisible(false)
-                .setTitle(R.string.menu_pop_label)
-                .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+                R.string.setting_order_by_popularity_key, Menu.NONE, null).setVisible(false)
+                .setTitle(R.string.menu_pop_label).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 
         changeToolbarSortTV();
 
