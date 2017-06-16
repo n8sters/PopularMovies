@@ -3,6 +3,7 @@ package com.android.ncpow.popularmovies;
 import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -150,21 +151,16 @@ class MovieAsyncTask extends AsyncTask<String, Void, Movie[]> {
     // creates the API request URL with parameters from shared preferences
     private URL createHTTPRequestUrl(String[] parameters) throws MalformedURLException {
 
-        final String sortOrderString = "sort_by";
-
-        // THIS IS NOT WHERE YOU PUT YOUR API KEY!!!!
-        // IT GOES AT THE VERY TOP OF MainActivity
-        final String apiKeyPlaceholder = "api_key";
-
         // works with the base URL from the top of this class.
-        String MOVIE_REQUEST_URL = "https://api.themoviedb.org/3/discover/movie?";
+        String MOVIE_REQUEST_URL = "https://api.themoviedb.org/3/movie/";
         Uri builtUri = Uri.parse(MOVIE_REQUEST_URL).buildUpon()
-                .appendQueryParameter(sortOrderString, parameters[0])
-                .appendQueryParameter(apiKeyPlaceholder, mApiKey)
+                .appendPath(parameters[0])
+                .appendQueryParameter("api_key", mApiKey)
                 .build();
 
         // build result api with parameters from shared preferences
         URL resultUrl = new URL(builtUri.toString());
+        Log.e(MovieAsyncTask.class.getSimpleName(), "Current url: " + builtUri.toString());
 
         return resultUrl;
     }
