@@ -30,13 +30,6 @@
             tools:targetApi="jelly_bean">
 
         </activity>
-        <activity
-            android:name=".SettingsActivity"
-            android:label="@string/settings_title">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".SettingsActivity" />
-        </activity>
     </application>
 
 </manifest>
