@@ -54,22 +54,8 @@ public class Movie implements Parcelable {
     }
 
     // converts numbers to star ratings.
-    public String getRating() {
-        int num = (int) Math.ceil(mRating / 2);
-        switch (num) {
-            case 5:
-                return "* * * * *";
-            case 4:
-                return "* * * *";
-            case 3:
-                return "* * *";
-            case 2:
-                return "* *";
-            case 1:
-                return "*";
-            default:
-                return "No rating found";
-        }
+    public double getRating() {
+        return mRating;
     }
 
     public String getPosterPath() {

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -18,6 +19,7 @@ import com.squareup.picasso.Picasso;
 // The detail activity, sets the images using Picasso.
 public class DetailActivity extends AppCompatActivity {
 
+
     @Override
     public void onCreate( Bundle savedInstanceState ) {
         super.onCreate(savedInstanceState);
@@ -26,7 +28,7 @@ public class DetailActivity extends AppCompatActivity {
         TextView movieName = (TextView) findViewById(R.id.movie_title_text_view);
         ImageView poster = (ImageView) findViewById(R.id.movie_poster_image_view);
         TextView releaseDatetv = (TextView) findViewById(R.id.release_date_text_view);
-        TextView rating = (TextView) findViewById(R.id.movie_rating_text_view);
+        RatingBar ratingBar = (RatingBar) findViewById(R.id.rating_bar);
         TextView description = (TextView) findViewById(R.id.description_scroll_view);
 
         Intent intent = getIntent();
@@ -52,7 +54,9 @@ public class DetailActivity extends AppCompatActivity {
         releaseDatetv.setText(releaseDate);
 
 
-        rating.setText(movie.getRating());
+        Double rating = (movie.getRating() / 2);
+
+        ratingBar.setRating(Float.parseFloat(rating.toString()));
 
         String overView = movie.getmMovieDescription();
         // if there wasn't an overview assigned to the movie, let the user know
